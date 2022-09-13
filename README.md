@@ -296,6 +296,7 @@ If you have questions or need help integrating the product please [contact us](h
 
 
 ## Deployment Config on AWS EC2
+```bash
 #!/bin/bash
 yum update -y
 yum install git -y
@@ -326,3 +327,4 @@ cp /mnt/efs/app.conf /etc/nginx/conf.d/app.conf
 
 systemctl reload nginx
 sudo tail -F /var/log/nginx/error.log
+```
