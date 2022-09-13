@@ -81,8 +81,8 @@ def register():
         # else we can create the user
         user = Users(**request.form)        
         db.session.add(user)
-        # employee = Employees(**request.form,age=22)
-        # db.session.add(employee)
+        employee = Employees(**request.form,age=22)
+        db.session.add(employee)
         db.session.commit()        
         
 
