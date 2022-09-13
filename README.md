@@ -314,7 +314,7 @@ sudo yum install -y amazon-efs-utils
 sudo mkdir /mnt/efs
 sudo mount -t efs -o tls fs-0f7b2cb4d9697bc71:/ /mnt/efs
 
-cp /mnt/efs/flaskapp.service /etc/systemd/system/flaskapp1.service
+cp /mnt/efs/flaskapp1.service /etc/systemd/system/flaskapp.service
 
 systemctl start flaskapp
 systemctl status flaskapp
