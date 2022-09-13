@@ -293,3 +293,36 @@ If you have questions or need help integrating the product please [contact us](h
 
 ---
 [Argon Dashboard Flask](https://www.creative-tim.com/product/argon-dashboard-flask) - Provided by [Creative Tim](https://www.creative-tim.com/) and [AppSeed](https://appseed.us)
+
+
+## Deployment Config on AWS EC2
+#!/bin/bash
+yum update -y
+yum install git -y
+cd /home/ec2-user/
+
+git clone https://github.com/kchongee/employee_management.git
+pip3 install -r requirements.txt
+pip3 install Werkzeug==2.0.0
+
+export FLASK_APP=run.py
+export FLASK_ENV=development
+
+sudo yum install -y amazon-efs-utils
+sudo mkdir /mnt/efs
+sudo mount -t efs -o tls fs-0f7b2cb4d9697bc71:/ /mnt/efs
+
+cp /mnt/efs/flaskapp.service /etc/systemd/system/flaskapp1.service
+
+systemctl start flaskapp
+systemctl status flaskapp
+systemctl enable flaskapp
+
+amazon-linux-extras install nginx1 -y
+systemctl start nginx
+systemctl enable nginx
+
+cp /mnt/efs/app.conf /etc/nginx/conf.d/app.conf
+
+systemctl reload nginx
+sudo tail -F /var/log/nginx/error.log
