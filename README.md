@@ -294,6 +294,7 @@ If you have questions or need help integrating the product please [contact us](h
 ---
 [Argon Dashboard Flask](https://www.creative-tim.com/product/argon-dashboard-flask) - Provided by [Creative Tim](https://www.creative-tim.com/) and [AppSeed](https://appseed.us)
 
+<br />
 
 ## Deployment Config on AWS EC2
 ```bash
