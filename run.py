@@ -24,13 +24,13 @@ try:
 except KeyError:
     exit('Error: Invalid <config_mode>. Expected values [Debug, Production] ')
 
-app = create_app(app_config)
-Migrate(app, db)
+application = create_app(app_config)
+Migrate(application, db)
 
 if DEBUG:
-    app.logger.info('DEBUG       = ' + str(DEBUG))
-    app.logger.info('Environment = ' + get_config_mode)
-    app.logger.info('DBMS        = ' + app_config.SQLALCHEMY_DATABASE_URI)
+    application.logger.info('DEBUG       = ' + str(DEBUG))
+    application.logger.info('Environment = ' + get_config_mode)
+    application.logger.info('DBMS        = ' + app_config.SQLALCHEMY_DATABASE_URI)
 
 if __name__ == "__main__":
-    app.run(host= '0.0.0.0',port=80, debug=True)
+    application.run(host= '0.0.0.0',port=80, debug=True)
