@@ -5,6 +5,7 @@ Copyright (c) 2019 - present AppSeed.us
 
 import sys
 import jwt
+import json 
 from functools import wraps
 from decouple import config
 from flask_login import UserMixin
@@ -42,6 +43,9 @@ class Users(db.Model, UserMixin):
 
     def as_dict(self):
         return {c.name: getattr(self, c.name) for c in self.__table__.columns}
+
+    def to_json(self):
+        return json.dumps(self.as_dict())
 
 # class Employees(db.Model):
 
@@ -179,8 +183,9 @@ def token_required(func):
         data = jwt.decode(token, config('SECRET_KEY'), algorithms=['HS256'])
         print(f'token decoded: {data}', file=sys.stdout)
         current_user = Users.query.filter_by(id=data['id']).first()                    
-        elasticache_redis.hset(token,"user",current_user.as_dict())
-        print(f'cache user: {elasticache_redis.hget(token,"user")}', file=sys.stdout)
+        print(f'json user: {json.dumps(current_user)}', file=sys.stdout)         
+        elasticache_redis.hset(token,"user",current_user.to_json())
+        print(f'cache user: {elasticache_redis.hget(token,"user")}', file=sys.stdout)         
         # try:
         #     # decode the token to obtain user public_id
         #     print(f'token: {token}', file=sys.stdout)
