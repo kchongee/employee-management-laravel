@@ -59,6 +59,16 @@
   {% block javascripts %}{% endblock javascripts %}
 
   <script src="/static/assets/js/argon.js?v=1.2.0"></script>
+  <script>
+    $(window).on("load",function () {
+      setTimeout(function () {
+        if ($(".alert").is(":visible")){
+          //you may add animate.css class for fancy fadeout
+          $(".alert").fadeOut("fast");
+        }
+      }, 3000)
+    });
+  </script>
 
 </body>
 

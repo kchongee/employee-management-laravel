@@ -12,123 +12,190 @@
             <h6 class="h2 text-white d-inline-block mb-0">Employees</h6>
             <nav aria-label="breadcrumb" class="d-none d-md-inline-block ml-md-4">
               <ol class="breadcrumb breadcrumb-links breadcrumb-dark">
-                <li class="breadcrumb-item"><a href="#"><i class="fas fa-home"></i></a></li>                
-                <li class="breadcrumb-item active" aria-current="page">Employees</li>
+                <li class="breadcrumb-item"><a href="#"><i class="fas fa-home"></i></a></li>
+                <li class="breadcrumb-item active" aria-current="page">Employees</li>                
+                <li class="breadcrumb-item active" aria-current="page">Add</li>
               </ol>
             </nav>
-          </div>
-          <div class="col-lg-6 col-5 text-right">
-            <a href="{{url_for('home_blueprint.employees_add')}}" type="button" class="btn btn-neutral"><i class="fa fa-plus mr-2" aria-hidden="true"></i>New</a>           
           </div>          
-        </div>
+        </div>        
+      </div>
+      <div>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+              {% for category, message in messages %}                  
+                  <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                    <b>{{ message }}</b>
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                  </div>
+              {% endfor %}
+            {% endif %}
+        {% endwith %}
       </div>
     </div>
-  </div>
+  </div>  
   
   <!-- Page content -->
   <div class="container-fluid mt--6">
     <div class="row">
       <div class="col">
         <div class="card">
-          <!-- Card header -->
-          <!-- <div class="card-header border-0 d-flex flex-row justify-content-between">
-            <div>
-              <h3 class="mb-0">Employees</h3>            
+          <div class="card-header">
+            <div class="row align-items-center">
+              <div class="col-6">
+                <h3 class="mb-0">Add New Employee</h3>
+              </div>              
+              <!-- <div class="col-4 text-right">
+                <a href="#!" class="btn btn-sm btn-primary">Settings</a>
+              </div> -->
             </div>
-            <div>
-              <button type="button" class="btn btn-primary"><i class="fa fa-plus" aria-hidden="true"></i>Add</button>
-            </div>
-          </div> -->
-          <!-- Light table -->
-          <div class="table-responsive">
-            <table class="table align-items-center table-flush">
-              <thead class="thead-light">
-                <tr>
-                  <th scope="col" data-sort="id">ID</th>
-                  <th scope="col" class="sort" data-sort="name">Name</th>
-                  <th scope="col" class="sort" data-sort="budget">Department</th>
-                  <th scope="col">Job Role</th>                  
-                  <th scope="col" class="sort" data-sort="status">Actions</th>
-                  <!-- <th scope="col"></th> -->
-                </tr>
-              </thead>
-              <tbody class="list">
-                <tr>
-                  <td>
-                    {{ID}}
-                  </td>
-                  <th scope="row">
-                    <div class="media align-items-center">
-                      <a href="#" class="avatar rounded-circle mr-3">
-                        <img alt="Image placeholder" src="/static/assets/img/theme/bootstrap.jpg">
-                        <!-- <img alt="Image placeholder" src="{{img_url}}"> -->
-                      </a>
-                      <div class="media-body">
-                        <span class="name mb-0 text-sm">Argon Design System</span>
-                        <!-- <span class="name mb-0 text-sm">{{name}}</span> -->
-                      </div>
-                    </div>
-                  </th>                  
-                  <td>
-                    {{department}}
-                    <!-- <span class="badge badge-dot mr-4">
-                      <i class="bg-warning"></i>
-                      <span class="status">pending</span>
-                    </span> -->                    
-                  </td>
-                  <td>
-                    {{job_role}}
-                    <!-- <div class="avatar-group">
-                      <a href="#" class="avatar avatar-sm rounded-circle" data-toggle="tooltip" data-original-title="Ryan Tompson">
-                        <img alt="Image placeholder" src="/static/assets/img/theme/team-1.jpg">
-                      </a>
-                      <a href="#" class="avatar avatar-sm rounded-circle" data-toggle="tooltip" data-original-title="Romina Hadid">
-                        <img alt="Image placeholder" src="/static/assets/img/theme/team-2.jpg">
-                      </a>
-                      <a href="#" class="avatar avatar-sm rounded-circle" data-toggle="tooltip" data-original-title="Alexander Smith">
-                        <img alt="Image placeholder" src="/static/assets/img/theme/team-3.jpg">
-                      </a>
-                      <a href="#" class="avatar avatar-sm rounded-circle" data-toggle="tooltip" data-original-title="Jessica Doe">
-                        <img alt="Image placeholder" src="/static/assets/img/theme/team-4.jpg">
-                      </a>
-                      <a href="#" class="avatar avatar-sm rounded-circle" data-toggle="tooltip" data-original-title="Jessica Doe">
-                        <img alt="Image placeholder" src="/static/assets/img/theme/team-4.jpg">
-                      </a>
-                      <a href="#" class="avatar avatar-sm rounded-circle" data-toggle="tooltip" data-original-title="Jessica Doe">
-                        <img alt="Image placeholder" src="/static/assets/img/theme/team-4.jpg">
-                      </a>
-                    </div> -->
-                  </td>
-                  <td>
-                    <button type="button" class="btn btn-primary"><i class="fa fa-info-circle mr-2" aria-hidden="true"></i>Details</button>
-                    <button type="button" class="btn btn-warning"><i class="fa fa-sticky-note mr-2" aria-hidden="true"></i>Notes</button>
-                    <button type="button" class="btn btn-danger"><i class="fa fa-trash mr-2" aria-hidden="true"></i></i>Remove</button>
-                    <!-- <div class="d-flex align-items-center">
-                      <span class="completion mr-2">60%</span>
-                      <div>
-                        <div class="progress">
-                          <div class="progress-bar bg-warning" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: 60%;"></div>
-                        </div>
-                      </div>
-                    </div> -->
-                  </td>
-                  <!-- <td class="text-right">
-                    <div class="dropdown">
-                      <a class="btn btn-sm btn-icon-only text-light" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        <i class="fas fa-ellipsis-v"></i>
-                      </a>
-                      <div class="dropdown-menu dropdown-menu-right dropdown-menu-arrow">
-                        <a class="dropdown-item" href="#">Action</a>
-                        <a class="dropdown-item" href="#">Another action</a>
-                        <a class="dropdown-item" href="#">Something else here</a>
-                      </div>
-                    </div>
-                  </td> -->
-                </tr>                
-              </tbody>
-            </table>
           </div>
-          <!-- Card footer -->          
+          <div class="card-body">
+            <form action="{{ url_for('home_blueprint.employees_add') }}" method="post" enctype="multipart/form-data">
+              <h6 class="heading-small text-muted mb-4">Login Account</h6>
+              <div class="pl-lg-4">
+                <div class="row">
+                  <div class="col-lg-6">
+                    <div class="form-group">
+                      <label class="form-control-label" for="input-username">Username</label>
+                      <input type="text" name="username" id="input-username" class="form-control" placeholder="Username" value="{{ current_user.username }}">
+                    </div>
+                  </div>
+                  <div class="col-lg-6">
+                    <div class="form-group">
+                      <label class="form-control-label " for="input-password">Password</label>
+                      <input type="password" name="password" id="input-password" class="form-control" placeholder="Password">
+                    </div>                    
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-lg-6">
+                    <div class="form-group">
+                      <label class="form-control-label" for="input-email">Email</label>
+                      <input type="text" name="email" id="input-email" class="form-control" placeholder="Email" value="{{ email }}">
+                    </div>
+                  </div>
+                  <div class="col-lg-6">
+                    <div class="form-group">
+                      <label class="form-control-label" for="input-role">Role</label>
+                      <select class="form-control" name="is_admin" id="input-role" placeholder="Role">                        
+                        <option value=1>Admin</option>
+                        <option value=0>User</option>                        
+                      </select>
+                    </div>                    
+                  </div>
+                </div>                                
+              </div>
+              <hr class="my-4" />
+              <!-- Address -->
+              <h6 class="heading-small text-muted mb-4">Employee Details</h6>
+              <div class="pl-lg-4">
+                <div class="row">
+                  <div class="col-lg-6">
+                    <div class="form-group">
+                      <label class="form-control-label" for="input-full-name">Full Name</label>
+                      <input type="text" name="full_name" id="input-full_name" class="form-control" placeholder="Full Name" value="{{full_name}}">
+                    </div>
+                  </div>                                           
+                  <div class="col-lg-6">
+                    <div class="form-group">
+                      <label class="form-control-label" for="input-contact">Contact</label>
+                      <input type="contact" name="contact" id="input-contact" class="form-control" placeholder="Contact" value="{{ contact }}">
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-md-12">
+                    <div class="form-group">
+                      <label for="input-profile_pic" class="form-control-label">Profile Picture</label>
+                      <input class="form-control" type="file" id="input-profile_pic" name="profile_pic" accept=".png, .jpg, .jpeg, .gif"/>
+                      <img src="" class="d-none"/>
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-md-12">
+                    <div class="form-group">
+                      <label class="form-control-label" for="input-address">Address</label>
+                      <input name="address" id="input-address" class="form-control" placeholder="Home Address" value="{{address}}" type="text">                      
+                    </div>
+                  </div>
+                </div>
+                <!-- <div class="row">
+                  <div class="col-lg-4">
+                    <div class="form-group">
+                      <label class="form-control-label" for="input-city">City</label>
+                      <input type="text" name="city" id="input-city" class="form-control" placeholder="City" value="New York">
+                    </div>
+                  </div>
+                  <div class="col-lg-4">
+                    <div class="form-group">
+                      <label class="form-control-label" for="input-country">Country</label>
+                      <input type="text" name="country" id="input-country" class="form-control" placeholder="Country" value="United States">
+                    </div>
+                  </div>
+                  <div class="col-lg-4">
+                    <div class="form-group">
+                      <label class="form-control-label" for="input-postal-code">Postal code</label>
+                      <input type="number" name="postal" id="input-postal-code" class="form-control" placeholder="Postal code">
+                    </div>
+                  </div>
+                </div> -->
+              </div>
+              <hr class="my-4" />
+              <!-- Description -->
+              <h6 class="heading-small text-muted mb-4">His/Her Job</h6>
+              <div class="pl-lg-4">
+                <div class="row">
+                  <div class="col-lg-6">
+                    <div class="form-group">
+                      <!-- <label class="form-control-label" for="input-department">Department</label>
+                      <select class="form-control" name="department" id="input-department" placeholder="Department">
+                        <option>1</option>
+                        <option>2</option>
+                        <option>3</option>
+                        <option>4</option>
+                      </select> -->
+                      <div class="form-group">
+                        <label for="departmentDataList" class="form-label">Department</label>
+                        <input class="form-control" name="department" list="departmentDatalistOptions" id="departmentDataList" placeholder="Department">
+                        <datalist id="departmentDatalistOptions">
+                          {% for department in departments%}
+                            <option value={{department}}>
+                          {% endfor %}
+                        </datalist>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-lg-6">
+                    <div class="form-group">
+                      <label for="jobDataList" class="form-label">Job Title</label>
+                      <input class="form-control" name="job" list="JobDatalistOptions" id="jobDataList" placeholder="Job Title">
+                      <datalist id="JobDatalistOptions">
+                        {% for job in jobs%}
+                          <option value="{{job}}">
+                        {% endfor %}
+                      </datalist>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <!-- <hr class="my-4" /> -->
+              <!-- Description -->
+              <!-- <h6 class="heading-small text-muted mb-4">About me</h6>
+              <div class="pl-lg-4">
+                <div class="form-group">
+                  <label class="form-control-label">About Me</label>
+                  <textarea rows="4" class="form-control" placeholder="A few words about you ...">A beautiful Dashboard for Bootstrap 4. It is Free and Open Source.</textarea>
+                </div>
+              </div> -->
+              <div class="text-right my-2 mx-auto mt-4 mb-2">
+                <button type="submit" class="btn btn-primary btn-lg px-4"><b>Submit</b></button>
+              </div>
+            </form>
+          </div>
         </div>
       </div>
     </div>

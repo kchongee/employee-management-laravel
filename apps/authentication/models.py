@@ -3,6 +3,7 @@
 Copyright (c) 2019 - present AppSeed.us
 """
 
+import sys
 from flask_login import UserMixin
 
 from apps import db, login_manager
@@ -11,12 +12,13 @@ from apps.authentication.util import hash_pass
 
 class Users(db.Model, UserMixin):
 
-    __tablename__ = 'Users'
+    __tablename__ = 'users'
 
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(64), unique=True)
     email = db.Column(db.String(64), unique=True)
     password = db.Column(db.LargeBinary)
+    is_admin = db.Column(db.Boolean, nullable=False)
 
     def __init__(self, **kwargs):
         for property, value in kwargs.items():
@@ -30,20 +32,54 @@ class Users(db.Model, UserMixin):
             if property == 'password':
                 value = hash_pass(value)  # we need bytes here (not plain str)
 
-            setattr(self, property, value)
+            setattr(self, property, value)        
+
 
     def __repr__(self):
         return str(self.username)
+
+# class Employees(db.Model):
+
+#     __tablename__ = 'employees'
+
+#     id = db.Column(db.Integer, primary_key=True)
+#     username = db.Column(db.String(64), unique=True)
+#     email = db.Column(db.String(64), unique=True)
+#     age = db.Column(db.Integer)
+#     username = db.Column(db.String(64), unique=True)
+#     password = db.Column(db.LargeBinary)
+
+#     def __init__(self, **kwargs):
+#         for property, value in kwargs.items():
+#             # depending on whether value is an iterable or not, we must
+#             # unpack it's value (when **kwargs is request.form, some values
+#             # will be a 1-element list)
+#             if hasattr(value, '__iter__') and not isinstance(value, str):
+#                 # the ,= unpack of a singleton fails PEP8 (travis flake8 test)
+#                 value = value[0]
+
+#             if property == 'password':
+#                 value = hash_pass(value)  # we need bytes here (not plain str)
+
+#             setattr(self, property, value)
+
+#     def __repr__(self):
+#         return str(self.username)
 
 class Employees(db.Model):
 
-    __tablename__ = 'Employees'
+    __tablename__ = 'employees'
 
-    id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(64), unique=True)
-    email = db.Column(db.String(64), unique=True)
-    age = db.Column(db.Integer)
-    password = db.Column(db.LargeBinary)
+    id = db.Column(db.Integer, primary_key=True)    
+    full_name = db.Column(db.String(64), unique=True)        
+    contact = db.Column(db.Integer)
+    address = db.Column(db.String(64), unique=True)
+    # city = db.Column(db.String(64), unique=True)
+    # country = db.Column(db.String(64), unique=True)
+    # postal_code = db.Column(db.String(64), unique=True)
+    department = db.Column(db.String(64), unique=True)
+    job = db.Column(db.String(64), unique=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
 
     def __init__(self, **kwargs):
         for property, value in kwargs.items():
@@ -52,15 +88,59 @@ class Employees(db.Model):
             # will be a 1-element list)
             if hasattr(value, '__iter__') and not isinstance(value, str):
                 # the ,= unpack of a singleton fails PEP8 (travis flake8 test)
-                value = value[0]
+                value = value[0] 
 
             if property == 'password':
-                value = hash_pass(value)  # we need bytes here (not plain str)
+                value = hash_pass(value)  # we need bytes here (not plain str)           
 
             setattr(self, property, value)
 
     def __repr__(self):
         return str(self.username)
+
+class Departments(db.Model):
+
+    __tablename__ = 'departments'
+
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(64), unique=True)
+
+
+    def __init__(self, **kwargs):
+        for property, value in kwargs.items():
+            # depending on whether value is an iterable or not, we must
+            # unpack it's value (when **kwargs is request.form, some values
+            # will be a 1-element list)
+            if hasattr(value, '__iter__') and not isinstance(value, str):
+                # the ,= unpack of a singleton fails PEP8 (travis flake8 test)
+                value = value[0]                        
+            setattr(self, property, value)                
+            
+
+    def __repr__(self):
+        return str(self.title)
+
+class Jobs(db.Model):
+
+    __tablename__ = 'jobs'
+
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(64), unique=True)
+
+
+    def __init__(self, **kwargs):
+        for property, value in kwargs.items():
+            # depending on whether value is an iterable or not, we must
+            # unpack it's value (when **kwargs is request.form, some values
+            # will be a 1-element list)
+            if hasattr(value, '__iter__') and not isinstance(value, str):
+                # the ,= unpack of a singleton fails PEP8 (travis flake8 test)
+                value = value[0]            
+
+            setattr(self, property, value)
+
+    def __repr__(self):
+        return str(self.title)
 
 
 @login_manager.user_loader

@@ -3,7 +3,9 @@
 Copyright (c) 2019 - present AppSeed.us
 """
 
-from flask import render_template, redirect, request, url_for
+from msilib.schema import Error
+import sys
+from flask import render_template, redirect, request, url_for, session
 from flask_login import (
     current_user,
     login_user,
@@ -13,20 +15,43 @@ from flask_login import (
 from apps import db, login_manager
 from apps.authentication import blueprint
 from apps.authentication.forms import LoginForm, CreateAccountForm
-from apps.authentication.models import Users, Employees
+from apps.authentication.models import Users, Employees, Departments, Jobs
 
 from apps.authentication.util import verify_pass
 
 
 @blueprint.route('/')
 def route_default():
+    print('This is default route', file=sys.stdout)
+    for department in ["Marketing","Operations","Finance","Sales","HR"]:
+        print(f"{department} come in?")
+        try:
+            print(f"{department} caaaame in?", file=sys.stdout)
+            department_record = Departments(title=department)        
+            db.session.add(department_record)
+            db.session.commit()     
+        except:
+            print(f'cant save the departments', file=sys.stdout)
+            break
+
+    for job in ["Full Stack Developer","Data Scientist","Cloud Engineer","DevOps Engineer","Software Engineer"]:
+        try:
+            print(f"{job} come in?")
+            job_record = Jobs(title=job)        
+            db.session.add(job_record)
+            db.session.commit()                 
+        except:
+            print(f'cant save the jobs', file=sys.stdout)        
+            break
+     
     return redirect(url_for('authentication_blueprint.login'))
 
 
 # Login & Registration
 
 @blueprint.route('/login', methods=['GET', 'POST'])
-def login():
+def login():    
+    session["key"] = 'value'
     login_form = LoginForm(request.form)
     if 'login' in request.form:
 
@@ -79,10 +104,10 @@ def register():
                                    form=create_account_form)
 
         # else we can create the user
-        user = Users(**request.form)        
+        user = Users(**request.form,is_admin=1)        
         db.session.add(user)
-        employee = Employees(**request.form,age=22)
-        db.session.add(employee)
+        # employee = Employees(**request.form,age=22)
+        # db.session.add(employee)
         db.session.commit()        
         
 
