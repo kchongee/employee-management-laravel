@@ -306,7 +306,6 @@ cd /home/ec2-user/
 git clone https://github.com/kchongee/employee_management.git
 cd employee_management
 pip3 install -r requirements.txt
-pip3 install Werkzeug==2.0.0
 
 export FLASK_APP=run.py
 export FLASK_ENV=development
