@@ -9,7 +9,7 @@ from functools import wraps
 from decouple import config
 from flask_login import UserMixin
 from flask import g, request, redirect, url_for, render_template, flash, session
-from apps import db, login_manager, elasticache_redis
+from apps import db, login_manager
 from apps.authentication.util import hash_pass
 
 class Users(db.Model, UserMixin):
