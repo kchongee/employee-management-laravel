@@ -169,14 +169,20 @@ def token_required(func):
 
         if not token:            
             return render_template('home/page-403.html'), 403
-        try:
-            # decode the token to obtain user public_id
-            print(f'token: {token}', file=sys.stdout)
-            data = jwt.decode(token, config('SECRET_KEY'), algorithms=['HS256'])
-            print(f'token decoded: {data}', file=sys.stdout)
-            current_user = Users.query.filter_by(id=data['id']).first()
-        except:
-            return render_template('home/page-403.html'), 403
+                
+        print(f'token: {token}', file=sys.stdout)
+        data = jwt.decode(token, config('SECRET_KEY'), algorithms=['HS256'])
+        print(f'token decoded: {data}', file=sys.stdout)
+        current_user = Users.query.filter_by(id=data['id']).first()                    
+        
+        # try:
+        #     # decode the token to obtain user public_id
+        #     print(f'token: {token}', file=sys.stdout)
+        #     data = jwt.decode(token, config('SECRET_KEY'), algorithms=['HS256'])
+        #     print(f'token decoded: {data}', file=sys.stdout)
+        #     current_user = Users.query.filter_by(id=data['id']).first()
+        # except:
+        #     return render_template('home/page-403.html'), 403
          # Return the user information attached to the token
         return func(current_user, *args, **kwargs)
     return decorator
