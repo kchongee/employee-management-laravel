@@ -11,7 +11,6 @@ from flask_login import UserMixin
 from flask import g, request, redirect, url_for, render_template, flash, session
 from apps import db, login_manager
 from apps.authentication.util import hash_pass
-from apps.authentication.models import Users, Employees, Departments, Jobs
 
 class Users(db.Model, UserMixin):
 
