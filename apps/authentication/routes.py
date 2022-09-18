@@ -54,10 +54,7 @@ def login():
         password = request.form['password']
 
         # Locate user
-        user = Users.query.filter_by(username=username).first()
-        print(f'login user_password: {user.password}', file=sys.stdout)
-        print(f'password: {password}', file=sys.stdout)
-        print(f'verify password: {verify_pass(password, user.password)}', file=sys.stdout)
+        user = Users.query.filter_by(username=username).first()        
         # Check the password
         if user and verify_pass(password, user.password):
 
@@ -72,7 +69,8 @@ def login():
                                msg='Wrong user or password',
                                form=login_form)
 
-    if not current_user.is_authenticated:
+    # if not current_user.is_authenticated:
+    if not session['auth_token']:
         return render_template('accounts/login.html',
                                form=login_form)
     return redirect(url_for('home_blueprint.index'))
