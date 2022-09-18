@@ -3,7 +3,6 @@
 Copyright (c) 2019 - present AppSeed.us
 """
 
-from msilib.schema import Error
 import sys
 from flask import render_template, redirect, request, url_for, session
 from flask_login import (
