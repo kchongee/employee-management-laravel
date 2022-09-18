@@ -8,12 +8,12 @@ from apps.home import blueprint
 from flask import render_template, request, flash, url_for, session
 from flask_login import login_required
 from jinja2 import TemplateNotFound
-from apps.authentication.models import Users, Employees, Departments, Jobs
+from apps.authentication.models import Users, Employees, Departments, Jobs, token_required
 from apps import db, login_manager, s3_bucket
 
 
 @blueprint.route('/index')
-@login_required
+@token_required
 def index():    
     # print(f'home session key: {session.get("key")}', file=sys.stdout)    
     # print(f'home session user_auth: {session.get("user_auth")}', file=sys.stdout)

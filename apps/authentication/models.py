@@ -160,10 +160,12 @@ def request_loader(request):
 def token_required(func):
     @wraps(func)
     def decorator(*args, **kwargs):
+        print(f'token_required decorator auth_token: {session.get("auth_token")}', file=sys.stdout)
         token = None
         # ensure the jwt-token is passed with the headers
         if 'x-access-token' in request.headers:
             token = request.headers['x-access-token']
+            print(f'token_required x-access-token: {token}', file=sys.stdout)
         if not token: # throw error if no token provided
             return render_template('home/page-403.html'), 403
         try:
