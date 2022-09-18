@@ -181,5 +181,5 @@ def token_required(func):
         # except:
         #     return render_template('home/page-403.html'), 403
          # Return the user information attached to the token
-        return func(current_user, *args, **kwargs)
+        return func(*args, **kwargs)
     return decorator
