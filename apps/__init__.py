@@ -12,9 +12,6 @@ from decouple import config
 import boto3
 from flask_session import Session
 import redis
-import logging
-
-logging.basicConfig(level=logging.INFO)
 
 db = SQLAlchemy()
 login_manager = LoginManager()
@@ -25,6 +22,8 @@ s3_bucket_location = aws_session.client('s3').get_bucket_location(Bucket=config(
 print(config("SESSION_REDIS"),file=sys.stdout)
 myredis = redis.Redis(host=config("REDIS_HOST"), port=6379, decode_responses=True)
 print(f'ping myredis: {myredis.ping()}', file=sys.stdout)
+myredis.set("hi","yoyooy")
+print(f'myredis hi: {myredis.get("hi")}', file=sys.stdout)
 # elasticache_redis = redis.Redis.from_url(f'redis://{config("SESSION_REDIS")}')
 # print(f'ping redis: {elasticache_redis.ping()}', file=sys.stdout)
 # elasticache_redis = redis.Redis()
