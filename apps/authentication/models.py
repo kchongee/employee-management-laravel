@@ -165,7 +165,7 @@ def token_required(func):
         if not session.get("auth_token"):
             return render_template('home/page-403.html'), 403                    
 
-        token = elasticache_redis.get(session.get("auth_token"))
+        # token = elasticache_redis.get(session.get("auth_token"))
 
         if not token:            
             return render_template('home/page-403.html'), 403
