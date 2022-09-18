@@ -13,7 +13,7 @@ from flask_login import (
 )
 from decouple import config
 from datetime import timedelta
-from apps import db, login_manager, elasticache_redis
+from apps import db, login_manager
 from apps.authentication import blueprint
 from apps.authentication.forms import LoginForm, CreateAccountForm
 from apps.authentication.models import Users, Employees, Departments, Jobs, token_required
