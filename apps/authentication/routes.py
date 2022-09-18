@@ -20,11 +20,7 @@ from apps.authentication.util import verify_pass
 
 
 @blueprint.route('/')
-def route_default():
-    # session["key"] = 'value'
-    # session["user_auth"] = 'ASIAVZFKJLM3ZWPMCJ55'
-    # print(f'default session key: {session.get("key")}', file=sys.stdout)
-    # print(f'default session user_auth: {session.get("user_auth")}', file=sys.stdout)
+def route_default():    
     for department in ["Marketing","Operations","Finance","Sales","HR"]:        
         try:            
             department_record = Departments(title=department)        
@@ -74,9 +70,9 @@ def login():
                                msg='Wrong user or password',
                                form=login_form)
 
-    if not current_user.is_authenticated:
-        return render_template('accounts/login.html',
-                               form=login_form)
+    # if not current_user.is_authenticated:
+    #     return render_template('accounts/login.html',
+    #                            form=login_form)
     return redirect(url_for('home_blueprint.index'))
 
 
