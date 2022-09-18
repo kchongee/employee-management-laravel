@@ -20,7 +20,7 @@ class Config(object):
 
     # Flask-Session
     SESSION_TYPE = config('SESSION_TYPE')
-    # SESSION_REDIS = redis.Redis.from_url(f'redis://{config("SESSION_REDIS")}')
+    SESSION_REDIS = redis.Redis.from_url(f'redis://{config("SESSION_REDIS")}')
 
 
 class ProductionConfig(Config):
@@ -46,7 +46,7 @@ class ProductionConfig(Config):
 
     # Flask-Session
     SESSION_TYPE = config('SESSION_TYPE')
-    # SESSION_REDIS = redis.Redis.from_url(f'redis://{config("SESSION_REDIS")}')
+    SESSION_REDIS = redis.Redis.from_url(f'redis://{config("SESSION_REDIS")}')
 
 
 class DebugConfig(Config):
