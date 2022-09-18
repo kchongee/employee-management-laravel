@@ -183,7 +183,7 @@ def token_required(func):
         data = jwt.decode(token, config('SECRET_KEY'), algorithms=['HS256'])
         print(f'token decoded: {data}', file=sys.stdout)
         current_user = Users.query.filter_by(id=data['id']).first()                    
-        print(f'json user: {json.dumps(current_user)}', file=sys.stdout)         
+        # print(f'json user: {json.dumps(current_user)}', file=sys.stdout)         
         elasticache_redis.hset(token,"user",current_user.to_json())
         print(f'cache user: {elasticache_redis.hget(token,"user")}', file=sys.stdout)         
         # try:
