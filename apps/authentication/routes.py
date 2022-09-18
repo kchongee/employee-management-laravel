@@ -21,11 +21,10 @@ from apps.authentication.util import verify_pass
 
 @blueprint.route('/')
 def route_default():
-    print('This is default route', file=sys.stdout)
-    for department in ["Marketing","Operations","Finance","Sales","HR"]:
-        print(f"{department} come in?")
-        try:
-            print(f"{department} caaaame in?", file=sys.stdout)
+    session["key"] = 'value'
+    print(f'session key: {session.get("key")}', file=sys.stdout)
+    for department in ["Marketing","Operations","Finance","Sales","HR"]:        
+        try:            
             department_record = Departments(title=department)        
             db.session.add(department_record)
             db.session.commit()     
@@ -34,8 +33,7 @@ def route_default():
             break
 
     for job in ["Full Stack Developer","Data Scientist","Cloud Engineer","DevOps Engineer","Software Engineer"]:
-        try:
-            print(f"{job} come in?")
+        try:            
             job_record = Jobs(title=job)        
             db.session.add(job_record)
             db.session.commit()                 
@@ -49,8 +47,7 @@ def route_default():
 # Login & Registration
 
 @blueprint.route('/login', methods=['GET', 'POST'])
-def login():    
-    session["key"] = 'value'
+def login():            
     login_form = LoginForm(request.form)
     if 'login' in request.form:
 
