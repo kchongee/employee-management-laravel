@@ -21,15 +21,14 @@ aws_session = boto3.session.Session(aws_access_key_id=config("AWS_ACCESS_KEY"), 
 s3_bucket = aws_session.resource('s3').Bucket(config('STORAGE_BUCKET')) if aws_session else ''
 s3_bucket_location = aws_session.client('s3').get_bucket_location(Bucket=config('STORAGE_BUCKET'))['LocationConstraint'] if aws_session else ''
 print(config("SESSION_REDIS"),file=sys.stdout)
-# elasticache_redis = redis.Redis.from_url(f'redis://{config("SESSION_REDIS")}')
-elasticache_redis = redis.Redis()
+elasticache_redis = redis.Redis.from_url(f'redis://{config("SESSION_REDIS")}')
+print(f'ping redis: {elasticache_redis.ping()}', file=sys.stdout)
+# elasticache_redis = redis.Redis()
 
 def register_extensions(app):
     db.init_app(app)
     login_manager.init_app(app)
-    sess.init_app(app)    
-    elasticache_redis.init_app(app)
-    print(f'ping redis: {elasticache_redis.ping()}', file=sys.stdout)
+    sess.init_app(app)            
 
 
 def register_blueprints(app):
