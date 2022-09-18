@@ -26,9 +26,6 @@ print(config("SESSION_REDIS"),file=sys.stdout)
 # print(f'myredis hi: {myredis.get("hi")}', file=sys.stdout)
 elasticache_redis = redis.Redis.from_url(f'redis://{config("SESSION_REDIS")}', decode_responses=True)
 print(f'ping redis: {elasticache_redis.ping()}', file=sys.stdout)
-elasticache_redis.set("hi","yoyooy")
-print(f'myredis hi: {elasticache_redis.get("hi")}', file=sys.stdout)
-# elasticache_redis = redis.Redis()
 
 def register_extensions(app):
     db.init_app(app)

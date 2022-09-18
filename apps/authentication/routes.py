@@ -13,8 +13,7 @@ from flask_login import (
 )
 from decouple import config
 from datetime import timedelta
-# from apps import db, login_manager, elasticache_redis
-from apps import db, login_manager
+from apps import db, login_manager, elasticache_redis
 from apps.authentication import blueprint
 from apps.authentication.forms import LoginForm, CreateAccountForm
 from apps.authentication.models import Users, Employees, Departments, Jobs, token_required
@@ -68,7 +67,7 @@ def login():
             # session['double_auth_token'] = double_auth_token
             print(f'login auth_token: {session.get("auth_token")}', file=sys.stdout)
             # print(f'login double_auth_token: {session.get("double_auth_token")}', file=sys.stdout)
-            # elasticache_redis.set(auth_token,True,ACCESS_EXPIRES)
+            elasticache_redis.set(auth_token,True,ACCESS_EXPIRES)
             # elasticache_redis.set(double_auth_token,auth_token,ACCESS_EXPIRES)
             return redirect(url_for('authentication_blueprint.route_default'))
 
