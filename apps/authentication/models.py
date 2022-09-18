@@ -40,6 +40,9 @@ class Users(db.Model, UserMixin):
     def __repr__(self):
         return str(self.username)
 
+    def as_dict(self):
+        return {c.name: getattr(self, c.name) for c in self.__table__.columns}
+
 # class Employees(db.Model):
 
 #     __tablename__ = 'employees'
@@ -100,6 +103,9 @@ class Employees(db.Model):
     def __repr__(self):
         return str(self.username)
 
+    def as_dict(self):
+       return {c.name: getattr(self, c.name) for c in self.__table__.columns}
+
 class Departments(db.Model):
 
     __tablename__ = 'departments'
@@ -144,6 +150,9 @@ class Jobs(db.Model):
     def __repr__(self):
         return str(self.title)
 
+    def as_dict(self):
+       return {c.name: getattr(self, c.name) for c in self.__table__.columns}
+
 
 @login_manager.user_loader
 def user_loader(id):
@@ -170,7 +179,7 @@ def token_required(func):
         data = jwt.decode(token, config('SECRET_KEY'), algorithms=['HS256'])
         print(f'token decoded: {data}', file=sys.stdout)
         current_user = Users.query.filter_by(id=data['id']).first()                    
-        elasticache_redis.hset(token,"user",current_user)
+        elasticache_redis.hset(token,"user",current_user.as_dict())
         print(f'cache user: {elasticache_redis.hget(token,"user")}', file=sys.stdout)
         # try:
         #     # decode the token to obtain user public_id
