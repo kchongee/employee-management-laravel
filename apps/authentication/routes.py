@@ -4,27 +4,27 @@ Copyright (c) 2019 - present AppSeed.us
 """
 
 import sys
+import jwt
 from flask import render_template, redirect, request, url_for, session
 from flask_login import (
     current_user,
     login_user,
     logout_user
 )
-
+from decouple import config
 from apps import db, login_manager
 from apps.authentication import blueprint
 from apps.authentication.forms import LoginForm, CreateAccountForm
-from apps.authentication.models import Users, Employees, Departments, Jobs
-
+from apps.authentication.models import Users, Employees, Departments, Jobs, token_required
 from apps.authentication.util import verify_pass
 
 
 @blueprint.route('/')
 def route_default():
-    session["key"] = 'value'
-    session["user_auth"] = 'ASIAVZFKJLM3ZWPMCJ55'
-    print(f'default session key: {session.get("key")}', file=sys.stdout)
-    print(f'default session user_auth: {session.get("user_auth")}', file=sys.stdout)
+    # session["key"] = 'value'
+    # session["user_auth"] = 'ASIAVZFKJLM3ZWPMCJ55'
+    # print(f'default session key: {session.get("key")}', file=sys.stdout)
+    # print(f'default session user_auth: {session.get("user_auth")}', file=sys.stdout)
     for department in ["Marketing","Operations","Finance","Sales","HR"]:        
         try:            
             department_record = Departments(title=department)        
@@ -63,7 +63,10 @@ def login():
         # Check the password
         if user and verify_pass(password, user.password):
 
-            login_user(user)
+            # login_user(user)
+            auth_token = jwt.encode({'id': user.id}, config('SECRET_KEY'), 'HS256')
+            session['auth_token'] = auth_token
+            print(f'login auth_token: {session.get("auth_token")}', file=sys.stdout)
             return redirect(url_for('authentication_blueprint.route_default'))
 
         # Something (user or pass) is not ok

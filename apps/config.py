@@ -26,8 +26,8 @@ class Config(object):
 class ProductionConfig(Config):
     DEBUG = False
 
-    # # Set up the App SECRET_KEY
-    # SECRET_KEY = config('SECRET_KEY', default='S#perS3crEt_007')
+    # Set up the App SECRET_KEY
+    SECRET_KEY = config('SECRET_KEY', default='S#perS3crEt_007')
 
     # Security
     SESSION_COOKIE_HTTPONLY = True

@@ -15,8 +15,9 @@ from apps import db, login_manager, s3_bucket
 @blueprint.route('/index')
 @login_required
 def index():    
-    print(f'home session key: {session.get("key")}', file=sys.stdout)    
-    print(f'home session user_auth: {session.get("user_auth")}', file=sys.stdout)    
+    # print(f'home session key: {session.get("key")}', file=sys.stdout)    
+    # print(f'home session user_auth: {session.get("user_auth")}', file=sys.stdout)
+    print(f'index auth_token: {session.get("auth_token")}', file=sys.stdout)
     return render_template('home/index.html', segment='index')
 
 

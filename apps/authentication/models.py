@@ -4,11 +4,14 @@ Copyright (c) 2019 - present AppSeed.us
 """
 
 import sys
+import jwt
+from functools import wraps
+from decouple import config
 from flask_login import UserMixin
-
+from flask import g, request, redirect, url_for, render_template, flash, session
 from apps import db, login_manager
-
 from apps.authentication.util import hash_pass
+from apps.authentication.models import Users, Employees, Departments, Jobs
 
 class Users(db.Model, UserMixin):
 
@@ -153,3 +156,23 @@ def request_loader(request):
     username = request.form.get('username')
     user = Users.query.filter_by(username=username).first()
     return user if user else None
+
+
+def token_required(func):
+    @wraps(func)
+    def decorator(*args, **kwargs):
+        token = None
+        # ensure the jwt-token is passed with the headers
+        if 'x-access-token' in request.headers:
+            token = request.headers['x-access-token']
+        if not token: # throw error if no token provided
+            return render_template('home/page-403.html'), 403
+        try:
+           # decode the token to obtain user public_id
+            data = jwt.decode(token, config('SECRET_KEY'), algorithms=['HS256'])
+            current_user = Users.query.filter_by(id=data['id']).first()
+        except:
+            return render_template('home/page-403.html'), 403
+         # Return the user information attached to the token
+        return func(current_user, *args, **kwargs)
+    return decorator
