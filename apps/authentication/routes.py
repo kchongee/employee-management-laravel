@@ -12,12 +12,14 @@ from flask_login import (
     logout_user
 )
 from decouple import config
-from apps import db, login_manager
+from datetime import timedelta
+from apps import db, login_manager, elasticache_redis
 from apps.authentication import blueprint
 from apps.authentication.forms import LoginForm, CreateAccountForm
 from apps.authentication.models import Users, Employees, Departments, Jobs, token_required
 from apps.authentication.util import verify_pass
 
+ACCESS_EXPIRES = timedelta(hours=1)
 
 @blueprint.route('/')
 def route_default():    
@@ -61,7 +63,12 @@ def login():
             # login_user(user)
             auth_token = jwt.encode({'id': user.id}, config('SECRET_KEY'), 'HS256')
             session['auth_token'] = auth_token
+            # double_auth_token = jwt.encode({'auth_token': auth_token}, config('SECRET_KEY'), 'HS256')
+            # session['double_auth_token'] = double_auth_token
             print(f'login auth_token: {session.get("auth_token")}', file=sys.stdout)
+            # print(f'login double_auth_token: {session.get("double_auth_token")}', file=sys.stdout)
+            elasticache_redis.set(auth_token,True,ACCESS_EXPIRES)
+            # elasticache_redis.set(double_auth_token,auth_token,ACCESS_EXPIRES)
             return redirect(url_for('authentication_blueprint.route_default'))
 
         # Something (user or pass) is not ok
@@ -70,7 +77,7 @@ def login():
                                form=login_form)
 
     # if not current_user.is_authenticated:
-    if not session['auth_token']:
+    if not session.get("auth_token"):
         return render_template('accounts/login.html',
                                form=login_form)
     return redirect(url_for('home_blueprint.index'))

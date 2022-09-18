@@ -10,6 +10,7 @@ from importlib import import_module
 from decouple import config
 import boto3
 from flask_session import Session
+import redis
 
 
 db = SQLAlchemy()
@@ -18,6 +19,7 @@ sess = Session()
 aws_session = boto3.session.Session(aws_access_key_id=config("AWS_ACCESS_KEY"), aws_secret_access_key=config("AWS_SECRET_KEY"), aws_session_token=config("AWS_SESSION_TOKEN"))
 s3_bucket = aws_session.resource('s3').Bucket(config('STORAGE_BUCKET')) if aws_session else ''
 s3_bucket_location = aws_session.client('s3').get_bucket_location(Bucket=config('STORAGE_BUCKET'))['LocationConstraint'] if aws_session else ''
+elasticache_redis = redis.Redis.from_url(f'redis://{config("SESSION_REDIS")}')
 
 def register_extensions(app):
     db.init_app(app)
