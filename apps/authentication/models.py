@@ -170,7 +170,8 @@ def token_required(func):
         data = jwt.decode(token, config('SECRET_KEY'), algorithms=['HS256'])
         print(f'token decoded: {data}', file=sys.stdout)
         current_user = Users.query.filter_by(id=data['id']).first()                    
-
+        elasticache_redis.hset(token,"user",current_user)
+        print(f'cache user: {elasticache_redis.hget(token,"user")}', file=sys.stdout)
         # try:
         #     # decode the token to obtain user public_id
         #     print(f'token: {token}', file=sys.stdout)
