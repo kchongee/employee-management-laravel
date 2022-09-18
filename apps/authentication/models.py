@@ -9,7 +9,8 @@ from functools import wraps
 from decouple import config
 from flask_login import UserMixin
 from flask import g, request, redirect, url_for, render_template, flash, session
-from apps import db, login_manager, elasticache_redis
+# from apps import db, login_manager, elasticache_redis
+from apps import db, login_manager
 from apps.authentication.util import hash_pass
 
 class Users(db.Model, UserMixin):
@@ -162,21 +163,21 @@ def token_required(func):
     def decorator(*args, **kwargs):
         print(f'token_required decorator auth_token: {session.get("auth_token")}', file=sys.stdout)
         # ensure the jwt-token is passed with the headers
-        if not session.get("auth_token"):
-            return render_template('home/page-403.html'), 403                    
+        # if not session.get("auth_token"):
+        #     return render_template('home/page-403.html'), 403                    
 
-        token = elasticache_redis.get(session.get("auth_token"))
+        # token = elasticache_redis.get(session.get("auth_token"))
 
-        if not token:            
-            return render_template('home/page-403.html'), 403
-        try:
-            # decode the token to obtain user public_id
-            print(f'token: {token}', file=sys.stdout)
-            data = jwt.decode(token, config('SECRET_KEY'), algorithms=['HS256'])
-            print(f'token decoded: {data}', file=sys.stdout)
-            current_user = Users.query.filter_by(id=data['id']).first()
-        except:
-            return render_template('home/page-403.html'), 403
-         # Return the user information attached to the token
-        return func(current_user, *args, **kwargs)
+        # if not token:            
+        #     return render_template('home/page-403.html'), 403
+        # try:
+        #     # decode the token to obtain user public_id
+        #     print(f'token: {token}', file=sys.stdout)
+        #     data = jwt.decode(token, config('SECRET_KEY'), algorithms=['HS256'])
+        #     print(f'token decoded: {data}', file=sys.stdout)
+        #     current_user = Users.query.filter_by(id=data['id']).first()
+        # except:
+        #     return render_template('home/page-403.html'), 403
+        #  # Return the user information attached to the token
+        # return func(current_user, *args, **kwargs)
     return decorator
