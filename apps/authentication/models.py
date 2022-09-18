@@ -9,7 +9,7 @@ from functools import wraps
 from decouple import config
 from flask_login import UserMixin
 from flask import g, request, redirect, url_for, render_template, flash, session
-from apps import db, login_manager
+from apps import db, login_manager, elasticache_redis
 from apps.authentication.util import hash_pass
 
 class Users(db.Model, UserMixin):
@@ -165,7 +165,7 @@ def token_required(func):
         if not session.get("auth_token"):
             return render_template('home/page-403.html'), 403                    
 
-        # token = elasticache_redis.get(session.get("auth_token"))
+        token = elasticache_redis.get(session.get("auth_token"))
 
         if not token:            
             return render_template('home/page-403.html'), 403

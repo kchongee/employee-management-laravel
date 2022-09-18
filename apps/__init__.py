@@ -21,7 +21,7 @@ aws_session = boto3.session.Session(aws_access_key_id=config("AWS_ACCESS_KEY"), 
 s3_bucket = aws_session.resource('s3').Bucket(config('STORAGE_BUCKET')) if aws_session else ''
 s3_bucket_location = aws_session.client('s3').get_bucket_location(Bucket=config('STORAGE_BUCKET'))['LocationConstraint'] if aws_session else ''
 print(config("SESSION_REDIS"),file=sys.stdout)
-# elasticache_redis = redis.Redis.from_url(f'redis://{config("SESSION_REDIS")}')
+elasticache_redis = redis.Redis.from_url(f'redis://{config("SESSION_REDIS")}')
 
 def register_extensions(app):
     db.init_app(app)
