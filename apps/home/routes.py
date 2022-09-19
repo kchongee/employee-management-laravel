@@ -67,7 +67,7 @@ def employees_add():
         username = form["username"]
         # password = form["password"]
         email = form["email"]        
-        profile_pic = request.files        
+        profile_pic = request.files["profile_pic"]       
         
         print(f'username: {form["username"]}', file=sys.stdout)
         print(f'password: {form["password"]}', file=sys.stdout)        
