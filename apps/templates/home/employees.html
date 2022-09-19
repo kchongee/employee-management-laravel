@@ -53,6 +53,36 @@
                 </tr>
               </thead>
               <tbody class="list">
+                {% for employee in employees %}
+                  <tr>
+                    <td>
+                      {{employee.id}}
+                    </td>
+                    <th scope="row">
+                      <div class="media align-items-center">
+                        <a href="#" class="avatar rounded-circle mr-3">
+                          <img alt="Image placeholder" src="{{object_url}}/emp-id-{{employee.id}}-profile-pic">
+                          <!-- <img alt="Image placeholder" src="{{img_url}}"> -->
+                        </a>
+                        <div class="media-body">
+                          <span class="name mb-0 text-sm">{{employee.full_name}}</span>
+                          <!-- <span class="name mb-0 text-sm">{{name}}</span> -->
+                        </div>
+                      </div>
+                    </th>                  
+                    <td>
+                      {{employee.department}}                      
+                    </td>
+                    <td>
+                      {{employee.job}}                      
+                    </td>
+                    <td>
+                      <button type="button" class="btn btn-primary"><i class="fa fa-info-circle mr-2" aria-hidden="true"></i>Details</button>
+                      <button type="button" class="btn btn-warning"><i class="fa fa-sticky-note mr-2" aria-hidden="true"></i>Notes</button>
+                      <button type="button" class="btn btn-danger"><i class="fa fa-trash mr-2" aria-hidden="true"></i></i>Remove</button>                      
+                    </td>                    
+                  </tr>   
+                {% endfor %}
                 <tr>
                   <td>
                     {{ID}}
