@@ -17,14 +17,23 @@ db = SQLAlchemy()
 login_manager = LoginManager()
 sess = Session()
 aws_session = boto3.session.Session(aws_access_key_id=config("AWS_ACCESS_KEY"), aws_secret_access_key=config("AWS_SECRET_KEY"), aws_session_token=config("AWS_SESSION_TOKEN"))
-print(f'session region_name: {aws_session.region_name}', file=sys.stdout)
-s3_bucket = aws_session.resource('s3').Bucket(config('STORAGE_BUCKET')) if aws_session else ''
-s3_bucket_location = aws_session.client('s3').get_bucket_location(Bucket=config('STORAGE_BUCKET'))['LocationConstraint'] if aws_session else ''
+s3 = boto3.resource('s3') 
+# s3.Bucket(custombucket).put_object(Key=emp_image_file_name_in_s3, Body=emp_image_file)
+print(f'my s3: {s3}', file=sys.stdout)
+
+bucket_location = boto3.client('s3').get_bucket_location(Bucket=config('STORAGE_BUCKET'))
+s3_location = (bucket_location['LocationConstraint'])
+print(f'my s3_location: {s3_location}',file=sys.stdout)
+
+# s3_bucket = aws_session.resource('s3').Bucket(config('STORAGE_BUCKET')) if aws_session else ''
+# s3_bucket_location = aws_session.client('s3').get_bucket_location(Bucket=config('STORAGE_BUCKET'))['LocationConstraint'] if aws_session else ''
+
 # print(config("SESSION_REDIS"),file=sys.stdout)
 # myredis = redis.Redis(host=config("REDIS_HOST"), port=6379, decode_responses=True)
 # print(f'ping myredis: {myredis.ping()}', file=sys.stdout)
 # myredis.set("hi","yoyooy")
 # print(f'myredis hi: {myredis.get("hi")}', file=sys.stdout)
+
 elasticache_redis = redis.Redis.from_url(f'redis://{config("SESSION_REDIS")}', decode_responses=True)
 print(f'ping redis: {elasticache_redis.ping()}', file=sys.stdout)
 
