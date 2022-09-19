@@ -10,7 +10,7 @@ from flask import render_template, request, flash, url_for, session, redirect, u
 from flask_login import login_required
 from jinja2 import TemplateNotFound
 from apps.authentication.models import Users, Employees, Departments, Jobs, token_required
-from apps import db, login_manager, s3_bucket, s3_bucket_constraint
+from apps import db, login_manager, s3_bucket, s3_bucket_location
 
 
 @blueprint.route('/index')
@@ -50,7 +50,7 @@ def employees():
     employees = Employees.query.all()
 
     object_url = "https://s3{0}.amazonaws.com/{1}/".format(
-        s3_bucket_constraint,
+        s3_bucket_location,
         config("STORAGE_BUCKET")            
     )
 
