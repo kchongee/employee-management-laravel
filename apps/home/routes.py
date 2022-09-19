@@ -189,8 +189,10 @@ def employees_update(id):
 @blueprint.route('/employees/delete/<id>')
 @token_required
 def employees_delete(id):            
-    user_to_delete = Users.query.filter_by(id=id).first()        
-    db.session.delete(user_to_delete)
+    user_to_delete = Users.query.filter_by(id=id).first()
+    employee_to_delete = Employees.query.filter_by(id=id).first()
+    db.session.delete(user_to_delete)    
+    db.session.delete(employee_to_delete)
     try:          
         s3_client.delete_object(Bucket=config("STORAGE_BUCKET"),Key=config("EMP_IMG_PREF")+str(id))
     except:           
