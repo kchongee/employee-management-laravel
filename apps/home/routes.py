@@ -49,7 +49,7 @@ def employees():
 
     employees = Employees.query.all()
 
-    object_url = "https://s3{0}.amazonaws.com/{1}/".format(
+    object_url = "https://s3{0}.amazonaws.com/{1}".format(
         s3_bucket_location,
         config("STORAGE_BUCKET")            
     )
