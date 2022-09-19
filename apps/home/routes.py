@@ -186,7 +186,7 @@ def employees_update(id):
         
     return render_template('home/employees_update.html', segment='employees_update', employee=employee, user=user)
 
-@blueprint.route('/employees_delete/<id>')
+@blueprint.route('/employees/delete/<id>')
 @token_required
 def employees_delete(id):            
     user_to_delete = Users.query.filter_by(id=id).first()        
@@ -195,12 +195,12 @@ def employees_delete(id):
         s3_bucket.delete_key(config("EMP_IMG_PREF"))
     except:           
         db.session.rollback()
-        print("something wrong when delete object from s3")  
-        session["flash_msg"] = f'There is something wrong when delete the emp with id:{id}'
+        print("something wrong when delete object from s3")          
+        session["flash_msg"] = {'msg':f'There is something wrong when delete the emp with id:{id}','type':'danger'}
         return redirect(url_for('home_blueprint.employees'))
     db.session.commit()            
 
-
+    session["flash_msg"] = {'msg':f'Successfully deleted the employee','type':'success'}
     return redirect(url_for('home_blueprint.employees'))    
 
 
