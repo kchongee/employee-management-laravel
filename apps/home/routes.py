@@ -11,6 +11,7 @@ from flask_login import login_required
 from jinja2 import TemplateNotFound
 from apps.authentication.models import Users, Employees, Departments, Jobs, token_required
 from apps import db, login_manager, s3_bucket, s3_bucket_location
+from apps.home.util import output_flash_msg
 
 
 @blueprint.route('/index')
@@ -56,11 +57,12 @@ def employees():
 
     print(f"object_url: {object_url}", file=sys.stdout)
     print(f"employees: {employees}", file=sys.stdout)
+    output_flash_msg()
     return render_template('home/employees.html', segment='employees', object_url=object_url, employees=employees)
 
-@blueprint.route('/employees_add',methods=('GET','POST'))
+@blueprint.route('/employees/create',methods=('GET','POST'))
 @token_required
-def employees_add():    
+def employees_create():    
     departments = Departments.query.all()
     jobs = Jobs.query.all()
     if request.method == 'POST':
@@ -77,15 +79,16 @@ def employees_add():
         # Check usename exists
         user = Users.query.filter_by(username=username).first()
         if user:
-            flash('Username has been taken', 'error')
-            return render_template('home/employees_add.html', segment='employees_add', form=form, departments=departments, jobs=jobs)
+            session["flash_msg"] = {'msg':'Username has been taken','type':'warning'}
+            return employees_create()         
 
         # Check email exists
         user = Users.query.filter_by(email=email).first()
         if user:
-            flash('The email is already taken', 'error')
-            return render_template('home/employees_add.html', segment='employees_add', form=form, departments=departments, jobs=jobs)
+            session["flash_msg"] = {'msg':'The email is already taken','type':'warning'}
+            return employees_create()
 
+        # convert the binary value to boolean
         is_admin=True if form["is_admin"] else False
         form.pop("is_admin",None)
         # else we can create the user
@@ -96,29 +99,43 @@ def employees_add():
         db.session.add(employee)
         db.session.flush()
         
-        emp_img_name = "emp-id-" + str(employee.id) + "-profile-pic"
+        emp_img_name = config("EMP_IMG_PREF") + str(employee.id)
         try:          
             print(s3_bucket)  
             s3_bucket.put_object(Key=emp_img_name, Body=profile_pic)
         except:           
             db.session.rollback()
             print("something wrong when put object into s3")  
-            flash('There is something wrong when inserting the data', 'error')
-            return render_template('home/employees_add.html', segment='employees_add', form=form, departments=departments, jobs=jobs)            
+            session["flash_msg"] = {'msg':'There is something wrong when inserting the data','type':'warning'}
+            return employees_create()
         db.session.commit()        
-        
+        session["flash_msg"] = {'msg':'The user is created','type':'success'}
         return redirect(url_for('home_blueprint.employees'))
     
     print(f'departments: {departments}', file=sys.stdout)
     print(f'jobs: {jobs}', file=sys.stdout)
-    return render_template('home/employees_add.html', segment='employees_add', departments=departments, jobs=jobs)
+    output_flash_msg()
+    return render_template('home/employees_create.html', segment='employees_create', departments=departments, jobs=jobs)
 
 
-@blueprint.route('/employees_update/{id}',methods=['POST'])
+@blueprint.route('/employees/detail/{id}',methods=('GET','POST'))
 @token_required
-def employees_update(id):    
-    departments = Departments.query.all()
-    jobs = Jobs.query.all()
+def employees_detail(id):    
+    user = Users.query.filter_by(id=id).first()
+    employee = Employees.query.filter_by(id=id).first()
+
+    if not (user and employee):
+        session["flash_msg"] = {'msg':f'Failed to retrieve employee with id: {id}','type':'warning'}
+        return redirect(url_for('home_blueprint.employees'))
+
+    output_flash_msg()
+    return render_template('home/employees_detail.html', segment='employees_detail', employee=employee, user=user)
+
+
+@blueprint.route('/employees/update/{id}',methods=['GET','POST'])
+@token_required
+def employees_update(id):
+    print(f'update?: {id}', file=sys.stdout)
     if request.method == 'POST':
         form = request.form.to_dict()
         username = form["username"]
@@ -130,17 +147,24 @@ def employees_update(id):
         print(f'password: {form["password"]}', file=sys.stdout)        
         print(f'pic: {profile_pic}', file=sys.stdout)        
 
-        # Check usename exists
+         # Check usename exists
         user = Users.query.filter_by(username=username).first()
         if user:
-            flash('Username has been taken', 'error')
-            return render_template('home/employees_add.html', segment='employees_add', form=form, departments=departments, jobs=jobs)
+            session["flash_msg"] = {'msg':'Username has been taken','type':'warning'}
+            return employees_update(id)
 
         # Check email exists
         user = Users.query.filter_by(email=email).first()
         if user:
-            flash('The email is already taken', 'error')
-            return render_template('home/employees_add.html', segment='employees_add', form=form, departments=departments, jobs=jobs)
+            session["flash_msg"] = {'msg':'The email is already taken','type':'warning'}
+            return employees_update(id)
+
+        user = Users.query.filter_by(id=id).first()
+        employee = Employees.query.filter_by(id=id).first()
+
+        if not (user and employee):
+            session["flash_msg"] = {'msg':f'There is something wrong when retrieving employee with id: {id}','type':'danger'}
+            return employees_update(id)
 
         is_admin=True if form["is_admin"] else False
         form.pop("is_admin",None)
@@ -152,7 +176,7 @@ def employees_update(id):
         db.session.add(employee)
         db.session.flush()
         
-        emp_img_name = "emp-id-" + str(employee.id) + "-profile-pic"
+        emp_img_name = config("EMP_IMG_PREF") + str(employee.id)
         try:          
             print(s3_bucket)  
             s3_bucket.put_object(Key=emp_img_name, Body=profile_pic)
@@ -160,69 +184,29 @@ def employees_update(id):
             db.session.rollback()
             print("something wrong when put object into s3")  
             flash('There is something wrong when inserting the data', 'error')
-            return render_template('home/employees_add.html', segment='employees_add', form=form, departments=departments, jobs=jobs)            
+            return render_template('home/employees_update.html', segment='employees_update', form=form, departments=departments, jobs=jobs)            
         db.session.commit()        
         
         return redirect(url_for('home_blueprint.employees'))
-    
-    print(f'departments: {departments}', file=sys.stdout)
-    print(f'jobs: {jobs}', file=sys.stdout)
-    return render_template('home/employees_add.html', segment='employees_add', departments=departments, jobs=jobs)
+        
+    return render_template('home/employees_update.html', segment='employees_update', employee=departments, jobs=jobs)
 
-@blueprint.route('/employees_delete/{id}',methods=['POST'])
+@blueprint.route('/employees_delete/{id}')
 @token_required
-def employees_delete(id):    
-    departments = Departments.query.all()
-    jobs = Jobs.query.all()
-    if request.method == 'POST':
-        form = request.form.to_dict()
-        username = form["username"]
-        # password = form["password"]
-        email = form["email"]        
-        profile_pic = request.files["profile_pic"]       
-        
-        print(f'username: {form["username"]}', file=sys.stdout)
-        print(f'password: {form["password"]}', file=sys.stdout)        
-        print(f'pic: {profile_pic}', file=sys.stdout)        
-
-        # Check usename exists
-        user = Users.query.filter_by(username=username).first()
-        if user:
-            flash('Username has been taken', 'error')
-            return render_template('home/employees_add.html', segment='employees_add', form=form, departments=departments, jobs=jobs)
-
-        # Check email exists
-        user = Users.query.filter_by(email=email).first()
-        if user:
-            flash('The email is already taken', 'error')
-            return render_template('home/employees_add.html', segment='employees_add', form=form, departments=departments, jobs=jobs)
-
-        is_admin=True if form["is_admin"] else False
-        form.pop("is_admin",None)
-        # else we can create the user
-        user = Users(**form,is_admin=is_admin)
-        db.session.add(user)
-        db.session.flush()        
-        employee = Employees(**form,user_id=user.id)
-        db.session.add(employee)
-        db.session.flush()
-        
-        emp_img_name = "emp-id-" + str(employee.id) + "-profile-pic"
-        try:          
-            print(s3_bucket)  
-            s3_bucket.put_object(Key=emp_img_name, Body=profile_pic)
-        except:           
-            db.session.rollback()
-            print("something wrong when put object into s3")  
-            flash('There is something wrong when inserting the data', 'error')
-            return render_template('home/employees_add.html', segment='employees_add', form=form, departments=departments, jobs=jobs)            
-        db.session.commit()        
-        
+def employees_delete(id):            
+    user_to_delete = Users.query.filter_by(id=id).first()        
+    db.session.delete(user_to_delete)
+    try:          
+        s3_bucket.delete_key(config("EMP_IMG_PREF"))
+    except:           
+        db.session.rollback()
+        print("something wrong when delete object from s3")  
+        session["flash_msg"] = f'There is something wrong when delete the emp with id:{id}'
         return redirect(url_for('home_blueprint.employees'))
-    
-    print(f'departments: {departments}', file=sys.stdout)
-    print(f'jobs: {jobs}', file=sys.stdout)
-    return render_template('home/employees_add.html', segment='employees_add', departments=departments, jobs=jobs)
+    db.session.commit()            
+
+
+    return redirect(url_for('home_blueprint.employees'))    
 
 
 # Helper - Extract current page name from request
