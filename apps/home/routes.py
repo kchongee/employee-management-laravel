@@ -10,7 +10,7 @@ from flask import render_template, request, flash, url_for, session, redirect, u
 from flask_login import login_required
 from jinja2 import TemplateNotFound
 from apps.authentication.models import Users, Employees, Departments, Jobs, token_required
-from apps import db, login_manager, s3_bucket, s3_bucket_location
+from apps import db, login_manager, s3_bucket, s3_bucket_location, s3_client
 from apps.home.util import output_flash_msg
 
 
@@ -192,7 +192,7 @@ def employees_delete(id):
     user_to_delete = Users.query.filter_by(id=id).first()        
     db.session.delete(user_to_delete)
     try:          
-        s3_bucket.delete_object(Bucket=config("STORAGE_BUCKET"),Key=config("EMP_IMG_PREF")+str(id))
+        s3_client.delete_object(Bucket=config("STORAGE_BUCKET"),Key=config("EMP_IMG_PREF")+str(id))
     except:           
         db.session.rollback()
         print("something wrong when delete object from s3")          
