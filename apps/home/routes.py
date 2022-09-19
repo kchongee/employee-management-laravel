@@ -141,13 +141,9 @@ def employees_update(id):
         username = form["username"]
         # password = form["password"]
         email = form["email"]        
-        profile_pic = request.files["profile_pic"]       
-        
-        print(f'username: {form["username"]}', file=sys.stdout)
-        print(f'password: {form["password"]}', file=sys.stdout)        
-        print(f'pic: {profile_pic}', file=sys.stdout)        
+        profile_pic = request.files["profile_pic"]                       
 
-         # Check usename exists
+         # Check username exists
         user = Users.query.filter_by(username=username).first()
         if user:
             session["flash_msg"] = {'msg':'Username has been taken','type':'warning'}
@@ -159,8 +155,8 @@ def employees_update(id):
             session["flash_msg"] = {'msg':'The email is already taken','type':'warning'}
             return employees_update(id)
 
-        user = Users.query.filter_by(id=id).first()
-        employee = Employees.query.filter_by(id=id).first()
+        # user = Users.query.filter_by(id=id).first()
+        # employee = Employees.query.filter_by(id=id).first()
 
         if not (user and employee):
             session["flash_msg"] = {'msg':f'There is something wrong when retrieving employee with id: {id}','type':'danger'}
@@ -168,13 +164,11 @@ def employees_update(id):
 
         is_admin=True if form["is_admin"] else False
         form.pop("is_admin",None)
-        # else we can create the user
-        user = Users(**form,is_admin=is_admin)
-        db.session.add(user)
-        db.session.flush()        
-        employee = Employees(**form,user_id=user.id)
-        db.session.add(employee)
-        db.session.flush()
+
+        db.session.query(Users).filter(id=id).update(form)
+        db.session.commit()
+        db.session.query(Employees).filter(id=id).update(form)
+        db.session.commit()                
         
         emp_img_name = config("EMP_IMG_PREF") + str(employee.id)
         try:          
@@ -184,12 +178,12 @@ def employees_update(id):
             db.session.rollback()
             print("something wrong when put object into s3")  
             flash('There is something wrong when inserting the data', 'error')
-            return render_template('home/employees_update.html', segment='employees_update', form=form, departments=departments, jobs=jobs)            
+            return redirect(url_for('home_blueprint.employees'))
         db.session.commit()        
         
         return redirect(url_for('home_blueprint.employees'))
         
-    return render_template('home/employees_update.html', segment='employees_update', employee=departments, jobs=jobs)
+    return render_template('home/employees_update.html', segment='employees_update', employee=employee, user=user)
 
 @blueprint.route('/employees_delete/{id}')
 @token_required
