@@ -17,18 +17,20 @@ db = SQLAlchemy()
 login_manager = LoginManager()
 sess = Session()
 
-# aws_session = boto3.session.Session(aws_access_key_id=config("AWS_ACCESS_KEY"), aws_secret_access_key=config("AWS_SECRET_KEY"), aws_session_token=config("AWS_SESSION_TOKEN"))
-s3 = boto3.resource('s3') 
+aws_session = boto3.session.Session(aws_access_key_id=config("AWS_ACCESS_KEY"), aws_secret_access_key=config("AWS_SECRET_KEY"), aws_session_token=config("AWS_SESSION_TOKEN"))
+# s3 = boto3.resource('s3') 
 # s3.Bucket(custombucket).put_object(Key=emp_image_file_name_in_s3, Body=emp_image_file)
-print(f'my s3: {s3}', file=sys.stdout)
-print(f'storage env: {config("STORAGE_BUCKET")}')
-bucket_location = boto3.client('s3').get_bucket_location(Bucket=config('STORAGE_BUCKET'))
-print(f'my bucket_location: {bucket_location}',file=sys.stdout)
-s3_location = (bucket_location['LocationConstraint'])
-print(f'my s3_location: {s3_location}',file=sys.stdout)
+# print(f'my s3: {s3}', file=sys.stdout)
+# print(f'storage env: {config("STORAGE_BUCKET")}')
+# bucket_location = boto3.client('s3').get_bucket_location(Bucket=config('STORAGE_BUCKET'))
+# print(f'my bucket_location: {bucket_location}',file=sys.stdout)
+# s3_location = (bucket_location['LocationConstraint'])
+# print(f'my s3_location: {s3_location}',file=sys.stdout)
 
-# s3_bucket = aws_session.resource('s3').Bucket(config('STORAGE_BUCKET')) if aws_session else ''
-# s3_bucket_location = aws_session.client('s3').get_bucket_location(Bucket=config('STORAGE_BUCKET'))['LocationConstraint'] if aws_session else ''
+print(f'my aws_session: {aws_session}',file=sys.stdout)
+
+s3_bucket = aws_session.resource('s3').Bucket(config('STORAGE_BUCKET'))
+s3_bucket_constraint = '' if aws_session.client('s3').get_bucket_location(Bucket=config('STORAGE_BUCKET'))['LocationConstraint'] else '-'
 
 # print(config("SESSION_REDIS"),file=sys.stdout)
 # myredis = redis.Redis(host=config("REDIS_HOST"), port=6379, decode_responses=True)
