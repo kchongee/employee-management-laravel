@@ -89,8 +89,8 @@ class Employees(db.Model):
     # city = db.Column(db.String(64), unique=True)
     # country = db.Column(db.String(64), unique=True)
     # postal_code = db.Column(db.String(64), unique=True)
-    department = db.Column(db.String(64), unique=True)
-    job = db.Column(db.String(64), unique=True)
+    department = db.Column(db.String(64))
+    job = db.Column(db.String(64))
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
 
     def __init__(self, **kwargs):
