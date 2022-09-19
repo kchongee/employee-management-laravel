@@ -121,6 +121,7 @@ def employees_create():
 @blueprint.route('/employees/detail/{id}',methods=('GET','POST'))
 @token_required
 def employees_detail(id):    
+    print(f'view employee detail with employee id: {id}', file=sys.stdout)
     user = Users.query.filter_by(id=id).first()
     employee = Employees.query.filter_by(id=id).first()
 
