@@ -42,12 +42,13 @@ class Users(db.Model, UserMixin):
         return str(self.username)
 
     def as_dict(self):
-        return {c.name: getattr(self, c.name) if type(getattr(self,c.name)) is bytes else None for c in self.__table__.columns}
+        return {c.name: getattr(self, c.name).decode('utf-8') if type(getattr(self,c.name)) is bytes else getattr(self,c.name) for c in self.__table__.columns}
 
     def to_json(self):
         print("Users dict: ",self.as_dict())
-        print("Users json: ",json.dumps(self.as_dict()))
-        print("Users json_indent4: ",json.dumps(self.as_dict(),indent=4))
+        print("Users dict: ",self.as_dict())
+        # print("Users json: ",json.dumps(self.as_dict()))
+        # print("Users json_indent4: ",json.dumps(self.as_dict(),indent=4))
         return json.dumps(self.as_dict())
 
 # class Employees(db.Model):
