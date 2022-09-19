@@ -118,7 +118,7 @@ def employees_create():
     return render_template('home/employees_create.html', segment='employees_create', departments=departments, jobs=jobs)
 
 
-@blueprint.route('/employees/detail/{id}',methods=('GET','POST'))
+@blueprint.route('/employees/detail/<id>',methods=('GET','POST'))
 @token_required
 def employees_detail(id):    
     print(f'view employee detail with employee id: {id}', file=sys.stdout)
@@ -133,7 +133,7 @@ def employees_detail(id):
     return render_template('home/employees_detail.html', segment='employees_detail', employee=employee, user=user)
 
 
-@blueprint.route('/employees/update/{id}',methods=['GET','POST'])
+@blueprint.route('/employees/update/<id>',methods=['GET','POST'])
 @token_required
 def employees_update(id):
     print(f'update?: {id}', file=sys.stdout)
@@ -186,7 +186,7 @@ def employees_update(id):
         
     return render_template('home/employees_update.html', segment='employees_update', employee=employee, user=user)
 
-@blueprint.route('/employees_delete/{id}')
+@blueprint.route('/employees_delete/<id>')
 @token_required
 def employees_delete(id):            
     user_to_delete = Users.query.filter_by(id=id).first()        
