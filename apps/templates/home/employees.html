@@ -91,9 +91,9 @@
                       {{employee.job}}                      
                     </td>
                     <td>
-                      <button type="button" class="btn btn-primary"><i class="fa fa-info-circle mr-2" aria-hidden="true"></i>Details</button>
-                      <button type="button" class="btn btn-warning"><i class="fa fa-sticky-note mr-2" aria-hidden="true"></i>Notes</button>
-                      <button type="button" class="btn btn-danger"><i class="fa fa-trash mr-2" aria-hidden="true"></i></i>Remove</button>                      
+                      <a href="/employees/detail/{{employee.id}}" class="btn btn-primary"><i class="fa fa-info-circle mr-2" aria-hidden="true"></i>Details</a>
+                      <!-- <a href="/employees/note/{{employee.id}}" class="btn btn-warning"><i class="fa fa-sticky-note mr-2" aria-hidden="true"></i>Notes</a> -->
+                      <a href="/employees/delete/{{employee.id}}" class="btn btn-danger"><i class="fa fa-trash mr-2" aria-hidden="true"></i></i>Remove</a>
                     </td>                    
                   </tr>   
                 {% endfor %}
