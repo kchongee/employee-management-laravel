@@ -17,6 +17,7 @@ db = SQLAlchemy()
 login_manager = LoginManager()
 sess = Session()
 aws_session = boto3.session.Session(aws_access_key_id=config("AWS_ACCESS_KEY"), aws_secret_access_key=config("AWS_SECRET_KEY"), aws_session_token=config("AWS_SESSION_TOKEN"))
+print(f'session region_name: {aws_session.region_name}', file=sys.stdout)
 s3_bucket = aws_session.resource('s3').Bucket(config('STORAGE_BUCKET')) if aws_session else ''
 s3_bucket_location = aws_session.client('s3').get_bucket_location(Bucket=config('STORAGE_BUCKET'))['LocationConstraint'] if aws_session else ''
 # print(config("SESSION_REDIS"),file=sys.stdout)
