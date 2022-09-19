@@ -45,9 +45,8 @@ class Users(db.Model, UserMixin):
         return {c.name: getattr(self, c.name).decode('utf-8') if type(getattr(self,c.name)) is bytes else getattr(self,c.name) for c in self.__table__.columns}
 
     def to_json(self):
-        print("Users dict: ",self.as_dict())        
-        print("Users json: ",json.dumps(self.as_dict()))
-        # print("Users json_indent4: ",json.dumps(self.as_dict(),indent=4))
+        # print("Users dict: ",self.as_dict())        
+        # print("Users json: ",json.dumps(self.as_dict()))
         return json.dumps(self.as_dict())
 
 # class Employees(db.Model):
@@ -187,8 +186,8 @@ def token_required(func):
         print(f'token decoded: {data}', file=sys.stdout)
         current_user = Users.query.filter_by(id=data['id']).first()                    
         # print(f'json user: {json.dumps(current_user)}', file=sys.stdout)         
-        elasticache_redis.hset(token,"user",current_user.to_json())
-        print(f'cache user: {elasticache_redis.hget(token,"user")}', file=sys.stdout)         
+        elasticache_redis.set(f'{token}-user',current_user.to_json())
+        print(f'cache user_json: {elasticache_redis.get(f"{token}-user")}', file=sys.stdout)
         # try:
         #     # decode the token to obtain user public_id
         #     print(f'token: {token}', file=sys.stdout)
