@@ -104,7 +104,7 @@ def employees_add():
             return render_template('home/employees_add.html', segment='employees_add', form=form, departments=departments, jobs=jobs)            
         db.session.commit()        
         
-        return redirect(url_for('employees'))
+        return redirect(url_for('home_blueprint.employees'))
     
     print(f'departments: {departments}', file=sys.stdout)
     print(f'jobs: {jobs}', file=sys.stdout)
