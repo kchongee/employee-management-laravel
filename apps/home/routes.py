@@ -192,7 +192,7 @@ def employees_delete(id):
     user_to_delete = Users.query.filter_by(id=id).first()        
     db.session.delete(user_to_delete)
     try:          
-        s3_bucket.delete_key(config("EMP_IMG_PREF")+str(id))
+        s3_bucket.delete_object(Bucket=config("STORAGE_BUCKET"),Key=config("EMP_IMG_PREF")+str(id))
     except:           
         db.session.rollback()
         print("something wrong when delete object from s3")          
