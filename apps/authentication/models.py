@@ -42,7 +42,7 @@ class Users(db.Model, UserMixin):
         return str(self.username)
 
     def as_dict(self):
-        return {c.name: getattr(self, c.name) for c in self.__table__.columns}
+        return {c.name: getattr(self, c.name) if type(getattr(self,c.name)) is bytes else None for c in self.__table__.columns}
 
     def to_json(self):
         print("Users dict: ",self.as_dict())
