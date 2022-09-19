@@ -100,15 +100,12 @@ class Employees(db.Model):
             # will be a 1-element list)
             if hasattr(value, '__iter__') and not isinstance(value, str):
                 # the ,= unpack of a singleton fails PEP8 (travis flake8 test)
-                value = value[0] 
-
-            if property == 'password':
-                value = hash_pass(value)  # we need bytes here (not plain str)           
+                value = value[0]             
 
             setattr(self, property, value)
 
     def __repr__(self):
-        return str(self.username)
+        return str(self.full_name)
 
     def as_dict(self):
        return {c.name: getattr(self, c.name) for c in self.__table__.columns}

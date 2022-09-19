@@ -114,6 +114,117 @@ def employees_add():
     return render_template('home/employees_add.html', segment='employees_add', departments=departments, jobs=jobs)
 
 
+@blueprint.route('/employees_update/{id}',methods=('POST'))
+@token_required
+def employees_update(id):    
+    departments = Departments.query.all()
+    jobs = Jobs.query.all()
+    if request.method == 'POST':
+        form = request.form.to_dict()
+        username = form["username"]
+        # password = form["password"]
+        email = form["email"]        
+        profile_pic = request.files["profile_pic"]       
+        
+        print(f'username: {form["username"]}', file=sys.stdout)
+        print(f'password: {form["password"]}', file=sys.stdout)        
+        print(f'pic: {profile_pic}', file=sys.stdout)        
+
+        # Check usename exists
+        user = Users.query.filter_by(username=username).first()
+        if user:
+            flash('Username has been taken', 'error')
+            return render_template('home/employees_add.html', segment='employees_add', form=form, departments=departments, jobs=jobs)
+
+        # Check email exists
+        user = Users.query.filter_by(email=email).first()
+        if user:
+            flash('The email is already taken', 'error')
+            return render_template('home/employees_add.html', segment='employees_add', form=form, departments=departments, jobs=jobs)
+
+        is_admin=True if form["is_admin"] else False
+        form.pop("is_admin",None)
+        # else we can create the user
+        user = Users(**form,is_admin=is_admin)
+        db.session.add(user)
+        db.session.flush()        
+        employee = Employees(**form,user_id=user.id)
+        db.session.add(employee)
+        db.session.flush()
+        
+        emp_img_name = "emp-id-" + str(employee.id) + "-profile-pic"
+        try:          
+            print(s3_bucket)  
+            s3_bucket.put_object(Key=emp_img_name, Body=profile_pic)
+        except:           
+            db.session.rollback()
+            print("something wrong when put object into s3")  
+            flash('There is something wrong when inserting the data', 'error')
+            return render_template('home/employees_add.html', segment='employees_add', form=form, departments=departments, jobs=jobs)            
+        db.session.commit()        
+        
+        return redirect(url_for('home_blueprint.employees'))
+    
+    print(f'departments: {departments}', file=sys.stdout)
+    print(f'jobs: {jobs}', file=sys.stdout)
+    return render_template('home/employees_add.html', segment='employees_add', departments=departments, jobs=jobs)
+
+@blueprint.route('/employees_delete/{id}',methods=('POST'))
+@token_required
+def employees_delete(id):    
+    departments = Departments.query.all()
+    jobs = Jobs.query.all()
+    if request.method == 'POST':
+        form = request.form.to_dict()
+        username = form["username"]
+        # password = form["password"]
+        email = form["email"]        
+        profile_pic = request.files["profile_pic"]       
+        
+        print(f'username: {form["username"]}', file=sys.stdout)
+        print(f'password: {form["password"]}', file=sys.stdout)        
+        print(f'pic: {profile_pic}', file=sys.stdout)        
+
+        # Check usename exists
+        user = Users.query.filter_by(username=username).first()
+        if user:
+            flash('Username has been taken', 'error')
+            return render_template('home/employees_add.html', segment='employees_add', form=form, departments=departments, jobs=jobs)
+
+        # Check email exists
+        user = Users.query.filter_by(email=email).first()
+        if user:
+            flash('The email is already taken', 'error')
+            return render_template('home/employees_add.html', segment='employees_add', form=form, departments=departments, jobs=jobs)
+
+        is_admin=True if form["is_admin"] else False
+        form.pop("is_admin",None)
+        # else we can create the user
+        user = Users(**form,is_admin=is_admin)
+        db.session.add(user)
+        db.session.flush()        
+        employee = Employees(**form,user_id=user.id)
+        db.session.add(employee)
+        db.session.flush()
+        
+        emp_img_name = "emp-id-" + str(employee.id) + "-profile-pic"
+        try:          
+            print(s3_bucket)  
+            s3_bucket.put_object(Key=emp_img_name, Body=profile_pic)
+        except:           
+            db.session.rollback()
+            print("something wrong when put object into s3")  
+            flash('There is something wrong when inserting the data', 'error')
+            return render_template('home/employees_add.html', segment='employees_add', form=form, departments=departments, jobs=jobs)            
+        db.session.commit()        
+        
+        return redirect(url_for('home_blueprint.employees'))
+    
+    print(f'departments: {departments}', file=sys.stdout)
+    print(f'jobs: {jobs}', file=sys.stdout)
+    return render_template('home/employees_add.html', segment='employees_add', departments=departments, jobs=jobs)
+
+
 # Helper - Extract current page name from request
 def get_segment(request):
 
