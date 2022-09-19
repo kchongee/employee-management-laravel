@@ -10,7 +10,7 @@ from flask import render_template, request, flash, url_for, session, redirect, u
 from flask_login import login_required
 from jinja2 import TemplateNotFound
 from apps.authentication.models import Users, Employees, Departments, Jobs, token_required
-from apps import db, login_manager, s3_bucket, s3_bucket_location, s3_client
+from apps import db, login_manager, s3_bucket, s3_bucket_location, s3_client, object_url
 from apps.home.util import output_flash_msg
 
 
@@ -48,12 +48,7 @@ def route_template(template):
 @token_required
 def employees():
 
-    employees = Employees.query.all()
-
-    object_url = "https://s3{0}.amazonaws.com/{1}".format(
-        s3_bucket_location,
-        config("STORAGE_BUCKET")            
-    )
+    employees = Employees.query.all()    
 
     print(f"object_url: {object_url}", file=sys.stdout)
     print(f"employees: {employees}", file=sys.stdout)
@@ -130,7 +125,7 @@ def employees_detail(id):
         return redirect(url_for('home_blueprint.employees'))
 
     output_flash_msg()
-    return render_template('home/employees_detail.html', segment='employees_detail', employee=employee, user=user)
+    return render_template('home/employees_detail.html', segment='employees_detail', employee=employee, user=user, object_url=object_url)
 
 
 @blueprint.route('/employees/update/<id>',methods=['GET','POST'])
