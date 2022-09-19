@@ -43,7 +43,7 @@ def route_template(template):
     except:
         return render_template('home/page-500.html'), 500
 
-@blueprint.route('/employees',methods=('GET'))
+@blueprint.route('/employees')
 @token_required
 def employees():
 
