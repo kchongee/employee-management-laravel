@@ -126,7 +126,8 @@ def register():
 
 @blueprint.route('/logout')
 def logout():
-    logout_user()
+    # logout_user()
+    session.pop("auth_token")
     return redirect(url_for('authentication_blueprint.login'))
 
 
