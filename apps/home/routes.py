@@ -114,7 +114,7 @@ def employees_add():
     return render_template('home/employees_add.html', segment='employees_add', departments=departments, jobs=jobs)
 
 
-@blueprint.route('/employees_update/{id}',methods=('POST'))
+@blueprint.route('/employees_update/{id}',methods=['POST'])
 @token_required
 def employees_update(id):    
     departments = Departments.query.all()
@@ -169,7 +169,7 @@ def employees_update(id):
     print(f'jobs: {jobs}', file=sys.stdout)
     return render_template('home/employees_add.html', segment='employees_add', departments=departments, jobs=jobs)
 
-@blueprint.route('/employees_delete/{id}',methods=('POST'))
+@blueprint.route('/employees_delete/{id}',methods=['POST'])
 @token_required
 def employees_delete(id):    
     departments = Departments.query.all()
