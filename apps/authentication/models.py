@@ -188,7 +188,7 @@ def token_required(func):
         current_user = elasticache_redis.get(f"user-{data['id']}") if elasticache_redis.get(f"user-{data['id']}") else Users.query.filter_by(id=data['id']).first().to_json()
         
         elasticache_redis.set(f"user-{data['id']}",current_user,ex=timedelta(hours=1))
-        print(f'cache user_json: {elasticache_redis.get("user-"+data["id"])}', file=sys.stdout)
+        print(f'cache user_json: {elasticache_redis.get("user-{0}".format(data["id"]))}', file=sys.stdout)
         # try:
         #     # decode the token to obtain user public_id
         #     print(f'token: {token}', file=sys.stdout)
