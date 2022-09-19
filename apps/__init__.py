@@ -32,6 +32,9 @@ print(f'my aws_session: {aws_session}',file=sys.stdout)
 s3_bucket = aws_session.resource('s3').Bucket(config('STORAGE_BUCKET'))
 s3_bucket_constraint = '' if aws_session.client('s3').get_bucket_location(Bucket=config('STORAGE_BUCKET'))['LocationConstraint'] else '-'
 
+print(f'my s3_bucket: {s3_bucket}',file=sys.stdout)
+print(f'my s3_bucket_constraint: {s3_bucket_constraint}',file=sys.stdout)
+
 # print(config("SESSION_REDIS"),file=sys.stdout)
 # myredis = redis.Redis(host=config("REDIS_HOST"), port=6379, decode_responses=True)
 # print(f'ping myredis: {myredis.ping()}', file=sys.stdout)
