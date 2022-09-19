@@ -55,6 +55,7 @@ def employees():
     )
 
     print(f"object_url: {object_url}", file=sys.stdout)
+    print(f"employees: {employees}", file=sys.stdout)
     return render_template('home/employees.html', segment='employees', object_url=object_url, employees=employees)
 
 @blueprint.route('/employees_add',methods=('GET','POST'))
