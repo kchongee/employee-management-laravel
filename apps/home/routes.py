@@ -156,13 +156,6 @@ def employees_update(id):
             session["flash_msg"] = {'msg':'The email is already taken','type':'warning'}
             return employees_update(id)
 
-        # user = Users.query.filter_by(id=id).first()
-        # employee = Employees.query.filter_by(id=id).first()
-
-        if not (user and employee):
-            session["flash_msg"] = {'msg':f'There is something wrong when retrieving employee with id: {id}','type':'danger'}
-            return employees_update(id)
-
         is_admin=True if form["is_admin"] else False
         form.pop("is_admin",None)
 
@@ -183,6 +176,13 @@ def employees_update(id):
         db.session.commit()        
         
         return redirect(url_for('home_blueprint.employees'))
+    else:
+        user = Users.query.filter_by(id=id).first()
+        employee = Employees.query.filter_by(id=id).first()
+
+        if not (user and employee):
+            session["flash_msg"] = {'msg':f'There is something wrong when retrieving employee with id: {id}','type':'danger'}
+            return employees_update(id)
         
     return render_template('home/employees_update.html', segment='employees_update', employee=employee, user=user)
 
@@ -192,7 +192,7 @@ def employees_delete(id):
     user_to_delete = Users.query.filter_by(id=id).first()        
     db.session.delete(user_to_delete)
     try:          
-        s3_bucket.delete_key(config("EMP_IMG_PREF"))
+        s3_bucket.delete_key(config("EMP_IMG_PREF")+str(id))
     except:           
         db.session.rollback()
         print("something wrong when delete object from s3")          
