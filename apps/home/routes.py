@@ -97,15 +97,15 @@ def employees_add():
         db.session.flush()
         
         emp_img_name = "emp-id-" + str(employee.id) + "-profile-pic"
-        # try:          
-        print(s3_bucket)  
-        s3_bucket.put_object(Key=emp_img_name, Body=profile_pic)
-        # except:           
-        #     db.session.rollback()
-        #     print("something wrong when put object into s3")  
-        #     flash('There is something wrong when inserting the data', 'error')
-        #     return render_template('home/employees_add.html', segment='employees_add', form=form, departments=departments, jobs=jobs)            
-        # db.session.commit()        
+        try:          
+            print(s3_bucket)  
+            s3_bucket.put_object(Key=emp_img_name, Body=profile_pic)
+        except:           
+            db.session.rollback()
+            print("something wrong when put object into s3")  
+            flash('There is something wrong when inserting the data', 'error')
+            return render_template('home/employees_add.html', segment='employees_add', form=form, departments=departments, jobs=jobs)            
+        db.session.commit()        
         
         return redirect(url_for('home_blueprint.employees'))
     
