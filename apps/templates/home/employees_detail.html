@@ -71,7 +71,7 @@
         <div class="row pt-1">
           <div class="col-6 mb-3">
             <h4>Username</h4>
-            <p class="text-muted">{{user.username}} ({% if user.is_admin %} Admin {% endif %})</p>
+            <p class="text-muted">{{user.username}} {% if user.is_admin %} (Admin) {% endif %}</p>
           </div>
           <div class="col-6 mb-3">
             <h4>Email</h4>
