@@ -127,6 +127,7 @@ def register():
 @blueprint.route('/logout')
 def logout():
     # logout_user()
+    elasticache_redis.delete(session.get("auth_token"))
     session.pop("auth_token")
     return redirect(url_for('authentication_blueprint.login'))
 
