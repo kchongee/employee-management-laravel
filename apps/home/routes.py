@@ -132,6 +132,8 @@ def employees_detail(id):
 @token_required
 def employees_update(id):
     print(f'update?: {id}', file=sys.stdout)
+    user = Users.query.filter_by(id=id).first()
+    employee = Employees.query.filter_by(id=id).first()
     if request.method == 'POST':
         form = request.form.to_dict()
         username = form["username"]
