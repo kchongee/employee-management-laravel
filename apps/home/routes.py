@@ -181,7 +181,7 @@ def employees_update(id):
             session["flash_msg"] = {'msg':f'There is something wrong when retrieving employee with id: {id}','type':'danger'}
             return employees_update(id)
         
-    return render_template('home/employees_update.html', segment='employees_update', employee=employee, user=user)
+    return render_template('home/employees_update.html', segment='employees_update', employees=employees, employee=employee, user=user)
 
 @blueprint.route('/employees/delete/<id>')
 @token_required
