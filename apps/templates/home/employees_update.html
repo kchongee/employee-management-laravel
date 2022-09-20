@@ -130,7 +130,7 @@
                         <input class="form-control" name="department" list="departmentDatalistOptions" id="departmentDataList" placeholder="Department">
                         <datalist id="departmentDatalistOptions">
                           {% for department in departments%}
-                            <option value={{employee.department}} {% if department==employee.department) %} selected {% endif %}>
+                            <option value={{employee.department}} {% if department==employee.department %} selected {% endif %}>
                           {% endfor %}
                         </datalist>
                       </div>
@@ -142,7 +142,7 @@
                       <input class="form-control" name="job" list="JobDatalistOptions" id="jobDataList" placeholder="Job Title">
                       <datalist id="JobDatalistOptions">
                         {% for job in jobs%}
-                          <option value="{{job}}" {% if job==(employee.job) %} selected {% endif %}>
+                          <option value="{{job}}" {% if job==employee.job %} selected {% endif %}>
                         {% endfor %}
                       </datalist>
                     </div>
