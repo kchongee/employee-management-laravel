@@ -63,6 +63,12 @@
                       <input type="text" name="username" id="input-username" class="form-control" placeholder="Username" value="{{ user.username }}">
                     </div>
                   </div>
+                  <div class="col-lg-6">
+                    <div class="form-group">
+                      <label class="form-control-label" for="input-username">Password</label>
+                      <input type="text" name="username" id="input-username" class="form-control" placeholder="Username" value="{{ user.password }}">
+                    </div>
+                  </div>
                 </div>
                 <div class="row">
                   <div class="col-lg-6">
@@ -76,7 +82,7 @@
                       <label class="form-control-label" for="input-role">Role</label>
                       <select class="form-control" name="is_admin" id="input-role" placeholder="Role">
                         <option value=1>Admin</option>                        
-                        <option value=0 {% if not user.is_admin  %} selected {% endif %}>User</option>                        
+                        <option value=0 {% if !user.is_admin  %} selected {% endif %}>User</option>                        
                       </select>
                     </div>                    
                   </div>
@@ -130,7 +136,7 @@
                         <input class="form-control" name="department" list="departmentDatalistOptions" id="departmentDataList" placeholder="Department">
                         <datalist id="departmentDatalistOptions">
                           {% for department in departments%}
-                            <option value={{employee.department}} {% if department==employee.department %} selected {% endif %}>
+                            <option value={{employee.department}} {% if department.__eq__(employee.department) %} selected {% endif %}>
                           {% endfor %}
                         </datalist>
                       </div>
@@ -139,10 +145,10 @@
                   <div class="col-lg-6">
                     <div class="form-group">
                       <label for="jobDataList" class="form-label">Job Title</label>
-                      <input class="form-control" name="job" list="JobDatalistOptions" id="jobDataList" placeholder="Job Title" value="{{employee.job}}">
+                      <input class="form-control" name="job" list="JobDatalistOptions" id="jobDataList" placeholder="Job Title">
                       <datalist id="JobDatalistOptions">
                         {% for job in jobs%}
-                          <option value="{{job}}">
+                          <option value="{{job}}" {% if job.__eq__(employee.job) %} selected {% endif %}>
                         {% endfor %}
                       </datalist>
                     </div>

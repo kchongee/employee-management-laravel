@@ -18,10 +18,12 @@ login_manager = LoginManager()
 sess = Session()
 
 aws_session = boto3.session.Session(aws_access_key_id=config("AWS_ACCESS_KEY"), aws_secret_access_key=config("AWS_SECRET_KEY"), aws_session_token=config("AWS_SESSION_TOKEN"))
-s3_bucket = aws_session.resource('s3').Bucket(config('STORAGE_BUCKET'))
-s3_bucket_constraint = aws_session.client('s3').get_bucket_location(Bucket=config('STORAGE_BUCKET'))['LocationConstraint']
-s3_bucket_location = '-'+s3_bucket_constraint if s3_bucket_constraint else '' 
+# s3_bucket = aws_session.resource('s3').Bucket(config('STORAGE_BUCKET'))
 s3_client = boto3.client('s3')
+s3_bucket = boto3.resource('s3').Bucket(config('STORAGE_BUCKET'))
+# s3_bucket_constraint = aws_session.client('s3').get_bucket_location(Bucket=config('STORAGE_BUCKET'))['LocationConstraint']
+s3_bucket_constraint = s3_client.get_bucket_location(Bucket=config('STORAGE_BUCKET'))['LocationConstraint']
+s3_bucket_location = '-'+s3_bucket_constraint if s3_bucket_constraint else '' 
 object_url = "https://s3{0}.amazonaws.com/{1}".format(
     s3_bucket_location,
     config("STORAGE_BUCKET")
