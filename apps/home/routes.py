@@ -7,7 +7,12 @@ import sys
 from decouple import config
 from apps.home import blueprint
 from flask import render_template, request, flash, url_for, session, redirect, url_for
-from flask_login import login_required
+from flask_login import (
+    login_required,
+    current_user,
+    login_user,
+    logout_user
+)
 from jinja2 import TemplateNotFound
 from apps.authentication.models import Users, Employees, Departments, Jobs, token_required
 from apps import db, login_manager, s3_bucket, s3_bucket_location, s3_client, object_url
@@ -48,7 +53,7 @@ def route_template(template):
 @login_required
 def employees():
 
-    employees = Users.query.all()
+    employees = Users.query.filter_by(id!=current_user.id).all()
 
     print(f"object_url: {object_url}", file=sys.stdout)
     print(f"employees: {employees}", file=sys.stdout)
