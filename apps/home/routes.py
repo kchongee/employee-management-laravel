@@ -143,7 +143,9 @@ def employees_update(id, employee=None):
     # if not (user and employee):
     if not employee:
         employee = Users.query.filter_by(id=id).first()
-        # employee = Employees.query.filter_by(id=id).first()
+    
+    departments = Departments.query.all()
+    jobs = Jobs.query.all()
 
     # employees = Employees.query.all()
     if request.method == 'POST':
@@ -190,7 +192,7 @@ def employees_update(id, employee=None):
             return redirect(url_for('home_blueprint.employees'))
     
     output_flash_msg()
-    return render_template('home/employees_update.html', segment='employees_update', employee=employee, object_url=object_url)
+    return render_template('home/employees_update.html', segment='employees_update', employee=employee, object_url=object_url, departments=departments, jobs=jobs)
 
 @blueprint.route('/employees/delete/<id>')
 @login_required
