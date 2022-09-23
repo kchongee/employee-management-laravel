@@ -90,7 +90,7 @@ def employees_create():
 
         print(f'form: {form}', file=sys.stdout)
         # convert the binary value to boolean
-        is_admin=True if form["is_admin"] else False
+        is_admin=True if int(form["is_admin"]) else False
         form.pop("is_admin",None)
         # else we can create the user
         user = Users(**form,is_admin=is_admin)
