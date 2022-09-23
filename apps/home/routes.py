@@ -181,7 +181,7 @@ def employees_update(id, user=None, employee=None):
             return redirect(url_for('home_blueprint.employees'))
     
     output_flash_msg()
-    return render_template('home/employees_update.html', segment='employees_update', employee=employee, user=user, object_url=object_url)
+    return render_template('home/employees_update.html', segment='employees_update', employee=employee, user=user, object_url=object_url, current_user=session["current_user"])
 
 @blueprint.route('/employees/delete/<id>')
 @token_required

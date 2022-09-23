@@ -68,8 +68,7 @@ def configure_database(app):
 
     @app.teardown_request
     def shutdown_session(exception=None):
-        db.session.remove()   
-
+        db.session.remove()
 
 def get_object_url(object_name):
     return f"https://s3{s3_bucket_location}.amazonaws.com/{config('STORAGE_BUCKET')}/{object_name}"

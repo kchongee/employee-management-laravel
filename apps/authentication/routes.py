@@ -21,13 +21,6 @@ from apps.authentication.util import verify_pass
 
 ACCESS_EXPIRES = timedelta(hours=1)
 
-@blueprint.context_processor()
-def inject_user():
-    current_user = {"username": "Guest"}
-    if g.current_user:
-        current_user=g.current_user
-    return dict(current_user=current_user)
-
 @blueprint.route('/')
 def route_default():    
     for department in ["Marketing","Operations","Finance","Sales","HR"]:        
@@ -76,7 +69,7 @@ def login():
             # print(f'login double_auth_token: {session.get("double_auth_token")}', file=sys.stdout)
             elasticache_redis.set(auth_token,1,ACCESS_EXPIRES)
             # elasticache_redis.set(double_auth_token,auth_token,ACCESS_EXPIRES)
-            g.current_user = user
+            session["current_user"] = user
             return redirect(url_for('authentication_blueprint.route_default'))
 
         # Something (user or pass) is not ok
