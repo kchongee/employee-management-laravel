@@ -308,7 +308,7 @@ cd employee_management
 pip3 install -r requirements.txt
 
 export FLASK_APP=run.py
-export FLASK_ENV=development
+export FLASK_ENV=production
 
 sudo yum install -y amazon-efs-utils
 sudo mkdir /mnt/efs
