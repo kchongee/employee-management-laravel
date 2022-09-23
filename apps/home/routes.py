@@ -141,32 +141,31 @@ def employees_update(id, employee=None):
     print(f'update?: {id}', file=sys.stdout)
 
     # if not (user and employee):
+    # employees = Employees.query.all()
     if not employee:
         employee = Users.query.filter_by(id=id).first()
-    
-    departments = Departments.query.all()
-    jobs = Jobs.query.all()
 
-    # employees = Employees.query.all()
     if request.method == 'POST':
         form = request.form.to_dict()
-        username = form["username"]        
-        email = form["email"]        
-        profile_pic = request.files["profile_pic"]                       
+        username = form["username"]
+        email = form["email"]
+        profile_pic = request.files["profile_pic"]
 
+        check_employee = Users.query.filter_by(username=username).first()
          # Check username exists                
-        if employee.username == username:
+        if check_employee:
             session["flash_msg"] = {'msg':'Username has been taken','type':'warning'}
             return employees_update(id,employee=employee)
 
+        check_employee = Users.query.filter_by(email=email).first()
         # Check email exists        
-        if employee.email == email:
+        if check_employee:
             session["flash_msg"] = {'msg':'The email is already taken','type':'warning'}
             return employees_update(id,employee=employee)
 
-        is_admin=True if form["is_admin"] else False
+        is_admin=True if int(form["is_admin"]) else False
         form.pop("is_admin",None)        
-        db.session.query(Users).filter(id=id).update(form,is_admin=is_admin)
+        db.session.query(Users).filter(Users.id==id).update(form,is_admin=is_admin)
         db.session.commit()
         # db.session.query(Employees).filter(id=id).update(form)
         # db.session.commit()
@@ -191,6 +190,8 @@ def employees_update(id, employee=None):
             session["flash_msg"] = {'msg':f'There is something wrong when retrieving employee with id: {id}','type':'danger'}
             return redirect(url_for('home_blueprint.employees'))
     
+    departments = Departments.query.all()
+    jobs = Jobs.query.all()
     output_flash_msg()
     return render_template('home/employees_update.html', segment='employees_update', employee=employee, object_url=object_url, departments=departments, jobs=jobs)
 
