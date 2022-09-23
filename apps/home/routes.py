@@ -165,9 +165,8 @@ def employees_update(id, employee=None):
             session["flash_msg"] = {'msg':'The email is already taken','type':'warning'}
             return employees_update(id,employee=employee)
 
-        is_admin=True if int(form["is_admin"]) else False
-        form.pop("is_admin",None)        
-        db.session.query(Users).filter(Users.id==id).update(form,is_admin=is_admin)
+        form["is_admin"] = True if int(form["is_admin"]) else False        
+        db.session.query(Users).filter(Users.id==id).update(form)
         db.session.commit()
         # db.session.query(Employees).filter(id=id).update(form)
         # db.session.commit()
