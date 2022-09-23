@@ -133,10 +133,10 @@
                     <div class="form-group">                     
                       <div class="form-group">
                         <label for="departmentDataList" class="form-label">Department</label>
-                        <input class="form-control" name="department" list="departmentDatalistOptions" id="departmentDataList" placeholder="Department">
+                        <input class="form-control" name="department" list="departmentDatalistOptions" id="departmentDataList" placeholder="Department" value="{{employee.department}}">
                         <datalist id="departmentDatalistOptions">
                           {% for department in departments%}
-                            <option value={{employee.department}} {% if department==employee.department %} selected {% endif %}>
+                            <option value={{department}}>
                           {% endfor %}
                         </datalist>
                       </div>
@@ -145,10 +145,10 @@
                   <div class="col-lg-6">
                     <div class="form-group">
                       <label for="jobDataList" class="form-label">Job Title</label>
-                      <input class="form-control" name="job" list="JobDatalistOptions" id="jobDataList" placeholder="Job Title">
+                      <input class="form-control" name="job" list="JobDatalistOptions" id="jobDataList" placeholder="Job Title" value="{{employee.job}}">
                       <datalist id="JobDatalistOptions">
                         {% for job in jobs%}
-                          <option value="{{job}}" {% if job==employee.job %} selected {% endif %}>
+                          <option value="{{job}}">
                         {% endfor %}
                       </datalist>
                     </div>
