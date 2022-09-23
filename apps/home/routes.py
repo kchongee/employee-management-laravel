@@ -15,16 +15,16 @@ from apps.home.util import output_flash_msg
 
 
 @blueprint.route('/index')
-@token_required
+@login_required
 def index():    
     # print(f'home session key: {session.get("key")}', file=sys.stdout)    
     # print(f'home session user_auth: {session.get("user_auth")}', file=sys.stdout)
-    print(f'index auth_token: {session.get("auth_token")}', file=sys.stdout)
+    # print(f'index auth_token: {session.get("auth_token")}', file=sys.stdout)
     return render_template('home/index.html', segment='index')
 
 
 @blueprint.route('/<template>')
-# @token_required
+@login_required
 def route_template(template):
 
     try:
@@ -45,10 +45,10 @@ def route_template(template):
         return render_template('home/page-500.html'), 500
 
 @blueprint.route('/employees')
-@token_required
+@login_required
 def employees():
 
-    employees = Employees.query.all()    
+    employees = Users.query.all()
 
     print(f"object_url: {object_url}", file=sys.stdout)
     print(f"employees: {employees}", file=sys.stdout)
@@ -56,7 +56,7 @@ def employees():
     return render_template('home/employees.html', segment='employees', object_url=object_url, employees=employees)
 
 @blueprint.route('/employees/create',methods=('GET','POST'))
-@token_required
+@login_required
 def employees_create():
     departments = Departments.query.all()
     jobs = Jobs.query.all()
@@ -90,11 +90,11 @@ def employees_create():
         user = Users(**form,is_admin=is_admin)
         db.session.add(user)
         db.session.flush()        
-        employee = Employees(**form,user_id=user.id)
-        db.session.add(employee)
-        db.session.flush()
+        # employee = Employees(**form,user_id=user.id)
+        # db.session.add(employee)
+        # db.session.flush()
         
-        emp_img_name = config("EMP_IMG_PREF") + str(employee.id)
+        emp_img_name = config("EMP_IMG_PREF") + str(user.id)
         try:          
             print(s3_bucket)  
             s3_bucket.put_object(Key=emp_img_name, Body=profile_pic)
@@ -114,28 +114,30 @@ def employees_create():
 
 
 @blueprint.route('/employees/detail/<id>',methods=('GET','POST'))
-@token_required
+@login_required
 def employees_detail(id):    
     print(f'view employee detail with employee id: {id}', file=sys.stdout)
-    user = Users.query.filter_by(id=id).first()
-    employee = Employees.query.filter_by(id=id).first()
+    employee = Users.query.filter_by(id=id).first()
+    # employee = Employees.query.filter_by(id=id).first()
 
-    if not (user and employee):
+    # if not (user and employee):
+    if not employee:
         session["flash_msg"] = {'msg':f'Failed to retrieve employee with id: {id}','type':'warning'}
         return redirect(url_for('home_blueprint.employees'))
 
     output_flash_msg()
-    return render_template('home/employees_detail.html', segment='employees_detail', employee=employee, user=user, object_url=object_url)
+    return render_template('home/employees_detail.html', segment='employees_detail', employee=employee, object_url=object_url)
 
 
 @blueprint.route('/employees/update/<id>',methods=['GET','POST'])
-@token_required
-def employees_update(id, user=None, employee=None):
+@login_required
+def employees_update(id, employee=None):
     print(f'update?: {id}', file=sys.stdout)
 
-    if not (user and employee):
-        user = Users.query.filter_by(id=id).first()
-        employee = Employees.query.filter_by(id=id).first()
+    # if not (user and employee):
+    if not employee:
+        employee = Users.query.filter_by(id=id).first()
+        # employee = Employees.query.filter_by(id=id).first()
 
     # employees = Employees.query.all()
     if request.method == 'POST':
@@ -145,21 +147,21 @@ def employees_update(id, user=None, employee=None):
         profile_pic = request.files["profile_pic"]                       
 
          # Check username exists                
-        if user.username == username:
+        if employee.username == username:
             session["flash_msg"] = {'msg':'Username has been taken','type':'warning'}
-            return employees_update(id,user=user,employee=employee)
+            return employees_update(id,employee=employee)
 
         # Check email exists        
-        if user.email == email:
+        if employee.email == email:
             session["flash_msg"] = {'msg':'The email is already taken','type':'warning'}
-            return employees_update(id,user=user,employee=employee)
+            return employees_update(id,employee=employee)
 
         is_admin=True if form["is_admin"] else False
         form.pop("is_admin",None)        
-        db.session.query(Users).filter(id=id).update(form)
+        db.session.query(Users).filter(id=id).update(form,is_admin=is_admin)
         db.session.commit()
-        db.session.query(Employees).filter(id=id).update(form)
-        db.session.commit()
+        # db.session.query(Employees).filter(id=id).update(form)
+        # db.session.commit()
         
         emp_img_name = config("EMP_IMG_PREF") + str(employee.id)
         if profile_pic:        
@@ -170,26 +172,27 @@ def employees_update(id, user=None, employee=None):
                 db.session.rollback()
                 print("something wrong when put object into s3")  
                 session["flash_msg"] = {'msg':'There is something wrong when putting the object into s3','type':'warning'}
-                return employees_update(id,user=user,employee=employee)
+                return employees_update(id,employee=employee)
             db.session.commit()        
         
         session["flash_msg"] = {'msg':'Update successfull','type':'success'}
         return redirect(url_for('home_blueprint.employees_detail',id=id))
     else:        
-        if not (user and employee):
+        # if not (user and employee):
+        if not employee:
             session["flash_msg"] = {'msg':f'There is something wrong when retrieving employee with id: {id}','type':'danger'}
             return redirect(url_for('home_blueprint.employees'))
     
     output_flash_msg()
-    return render_template('home/employees_update.html', segment='employees_update', employee=employee, user=user, object_url=object_url, current_user=session["current_user"])
+    return render_template('home/employees_update.html', segment='employees_update', employee=employee, object_url=object_url)
 
 @blueprint.route('/employees/delete/<id>')
-@token_required
+@login_required
 def employees_delete(id):            
     user_to_delete = Users.query.filter_by(id=id).first()
-    employee_to_delete = Employees.query.filter_by(id=id).first()
     db.session.delete(user_to_delete)    
-    db.session.delete(employee_to_delete)
+    # employee_to_delete = Employees.query.filter_by(id=id).first()
+    # db.session.delete(employee_to_delete)
     try:          
         s3_client.delete_object(Bucket=config("STORAGE_BUCKET"),Key=config("EMP_IMG_PREF")+str(id))
     except:           

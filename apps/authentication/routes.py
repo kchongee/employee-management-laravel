@@ -60,16 +60,15 @@ def login():
         # Check the password
         if user and verify_pass(password, user.password):
 
-            # login_user(user)
-            auth_token = jwt.encode({'id': user.id}, config('SECRET_KEY'), 'HS256')
-            session['auth_token'] = auth_token
-            # double_auth_token = jwt.encode({'auth_token': auth_token}, config('SECRET_KEY'), 'HS256')
-            # session['double_auth_token'] = double_auth_token
-            print(f'login auth_token: {session.get("auth_token")}', file=sys.stdout)
-            # print(f'login double_auth_token: {session.get("double_auth_token")}', file=sys.stdout)
-            elasticache_redis.set(auth_token,1,ACCESS_EXPIRES)
-            # elasticache_redis.set(double_auth_token,auth_token,ACCESS_EXPIRES)
-            session["current_user"] = user
+            # using redis & flask session to store user data
+            # auth_token = jwt.encode({'id': user.id}, config('SECRET_KEY'), 'HS256')
+            # session['auth_token'] = auth_token            
+            # print(f'login auth_token: {session.get("auth_token")}', file=sys.stdout)            
+            # elasticache_redis.set(auth_token,1,ACCESS_EXPIRES)            
+            # session["current_user"] = user
+
+            # using flask-login to handle user ssion
+            login_user(user)
             return redirect(url_for('authentication_blueprint.route_default'))
 
         # Something (user or pass) is not ok
@@ -77,8 +76,12 @@ def login():
                                msg='Wrong user or password',
                                form=login_form)
 
-    # if not current_user.is_authenticated:
-    if not session.get("auth_token"):
+    # redis & flask-session
+    # if not session.get("auth_token"):
+    #     return render_template('accounts/login.html',
+    #                            form=login_form)
+
+    if not current_user.is_authenticated:
         return render_template('accounts/login.html',
                                form=login_form)
     return redirect(url_for('home_blueprint.index'))
@@ -111,9 +114,7 @@ def register():
         # else we can create the user
         user = Users(**request.form,is_admin=1)        
         db.session.add(user)
-        # employee = Employees(**request.form,age=22)
-        # db.session.add(employee)
-        db.session.commit()        
+        db.session.commit()                
         
 
         return render_template('accounts/register.html',
@@ -127,9 +128,9 @@ def register():
 
 @blueprint.route('/logout')
 def logout():
-    # logout_user()
-    elasticache_redis.delete(session.get("auth_token"))
-    session.pop("auth_token")
+    # elasticache_redis.delete(session.get("auth_token"))
+    # session.pop("auth_token")
+    logout_user()
     return redirect(url_for('authentication_blueprint.login'))
 
 
