@@ -1,8 +1,3 @@
-# -*- encoding: utf-8 -*-
-"""
-Copyright (c) 2019 - present AppSeed.us
-"""
-
 import sys
 from flask import Flask, g
 from flask_login import LoginManager
@@ -69,9 +64,6 @@ def configure_database(app):
     @app.teardown_request
     def shutdown_session(exception=None):
         db.session.remove()
-
-def get_object_url(object_name):
-    return f"https://s3{s3_bucket_location}.amazonaws.com/{config('STORAGE_BUCKET')}/{object_name}"
 
 def create_app(config):
     app = Flask(__name__)
