@@ -88,6 +88,7 @@ def employees_create():
             session["flash_msg"] = {'msg':'The email is already taken','type':'warning'}
             return employees_create()
 
+        print(f'form: {form}', file=sys.stdout)
         # convert the binary value to boolean
         is_admin=True if form["is_admin"] else False
         form.pop("is_admin",None)
