@@ -17,6 +17,7 @@ from jinja2 import TemplateNotFound
 from apps.authentication.models import Users, Employees, Departments, Jobs, token_required
 from apps import db, login_manager, s3_bucket, s3_bucket_location, s3_client, object_url
 from apps.home.util import output_flash_msg
+from apps.authentication.util import verify_pass
 
 
 @blueprint.route('/index')
@@ -25,7 +26,8 @@ def index():
     # print(f'home session key: {session.get("key")}', file=sys.stdout)    
     # print(f'home session user_auth: {session.get("user_auth")}', file=sys.stdout)
     # print(f'index auth_token: {session.get("auth_token")}', file=sys.stdout)
-    return render_template('home/index.html', segment='index')
+    return redirect(url_for('home_blueprint.employees'))
+    # return render_template('home/index.html', segment='index')
 
 
 @blueprint.route('/<template>')
@@ -213,8 +215,37 @@ def employees_delete(id):
     db.session.commit()            
 
     session["flash_msg"] = {'msg':f'Successfully deleted the employee','type':'success'}
-    return redirect(url_for('home_blueprint.employees'))    
+    return redirect(url_for('home_blueprint.employees'))  
 
+@blueprint.route('/employees/change_password/<id>',methods=('GET','POST'))  
+@login_required
+def employees_change_password(id):
+    if request.method == 'POST':
+        form = request.form.to_dict()
+        old_password = form["old_password"]
+        new_password = form["new_password"]
+        confirm_password = form["confirm_password"]
+        
+        check_employee = Users.query.filter_by(id=id).first()
+        if not verify_pass(old_password, check_employee.password):
+            print(f'verify password: {check_employee}', file=sys.stdout)
+            session["flash_msg"] = {'msg':'You have entered the wrong password','type':'danger'}
+            return employees_change_password(id)
+
+        if new_password != confirm_password:                
+            print(f'check employee found(username): {check_employee}', file=sys.stdout)
+            session["flash_msg"] = {'msg':"Password doesn't match",'type':'danger'}
+            return employees_change_password(id)
+        
+        check_employee.password = new_password
+        db.session.commit()   # check this line
+        # db.session.filter_by(id=id).update()            
+        
+        session["flash_msg"] = {'msg':'Password changed successfully','type':'success'}
+        return redirect(url_for('home_blueprint.employees_detail',id=id))
+
+    output_flash_msg()
+    return render_template('home/employees_change_password.html', segment='employees_change_password')
 
 # Helper - Extract current page name from request
 def get_segment(request):
