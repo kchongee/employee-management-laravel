@@ -53,7 +53,7 @@ def route_template(template):
 @login_required
 def employees():
 
-    employees = Users.query.filter_by(id!=current_user.id).all()
+    employees = Users.query.filter_by(id==current_user.id).all()
 
     print(f"object_url: {object_url}", file=sys.stdout)
     print(f"employees: {employees}", file=sys.stdout)
