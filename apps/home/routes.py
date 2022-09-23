@@ -230,12 +230,12 @@ def employees_change_password(id):
         check_employee = Users.query.filter_by(id=id).first()
         if not verify_pass(old_password, check_employee.password):
             print(f'verify password: {check_employee}', file=sys.stdout)
-            session["flash_msg"] = {'msg':'You have entered the wrong password','type':'danger'}
+            session["flash_msg"] = {'msg':'You have entered the wrong old password','type':'danger'}
             return redirect(url_for('home_blueprint.employees_change_password',id=id))
 
         if new_password != confirm_password:                
             print(f'check employee found(username): {check_employee}', file=sys.stdout)
-            session["flash_msg"] = {'msg':"Password doesn't match",'type':'danger'}
+            session["flash_msg"] = {'msg':"New password doesn't match",'type':'danger'}
             return redirect(url_for('home_blueprint.employees_change_password',id=id))
         
         check_employee.password = hash_pass(new_password)
