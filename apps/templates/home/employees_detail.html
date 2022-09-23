@@ -74,31 +74,31 @@
         <div class="row pt-1">
           <div class="col-4 mb-3">
             <span class="h4">Username</span>
-            <p class="text-muted">{{user.username}}</p>
+            <p class="text-muted">{{employee.username}}</p>
           </div>
           <div class="col-4 mb-3">
             <span class="h4">Email</span>
-            <p class="text-muted">{{user.email}}</p>
+            <p class="text-muted">{{employee.email}}</p>
           </div>
           <div class="col-4 mb-3">
             <span class="h4">Account Type</span>
-            <p class="text-muted">{% if user.is_admin %} Admin {% else %} User {% endif %}</p>
+            <p class="text-muted">{% if employee.is_admin %} Admin {% else %} User {% endif %}</p>
           </div>
           <!-- <div class="col-3 mb-3">
             <span class="h4">Username</span>
-            <p class="text-muted">{{user.username}}</p>
+            <p class="text-muted">{{employee.username}}</p>
           </div>
           <div class="col-3 mb-3">
             <span class="h4">Password</span>
-            <p class="text-muted">{% for i in range(user.password|length) %} * {% endfor %}</p>
+            <p class="text-muted">{% for i in range(employee.password|length) %} * {% endfor %}</p>
           </div>
           <div class="col-3 mb-3">
             <span class="h4">Email</span>
-            <p class="text-muted">{{user.email}}</p>
+            <p class="text-muted">{{employee.email}}</p>
           </div>
           <div class="col-3 mb-3">
             <span class="h4">Account Type</span>
-            <p class="text-muted">{% if user.is_admin %} Admin {% else %} User {% endif %}</p>
+            <p class="text-muted">{% if employee.is_admin %} Admin {% else %} User {% endif %}</p>
           </div> -->
         </div>        
       </div>        
