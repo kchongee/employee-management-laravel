@@ -21,6 +21,13 @@ from apps.authentication.util import verify_pass
 
 ACCESS_EXPIRES = timedelta(hours=1)
 
+@blueprint.context_processor()
+def inject_user():
+    current_user = {"username": "Guest"}
+    if g.current_user:
+        current_user=g.current_user
+    return dict(current_user=current_user)
+
 @blueprint.route('/')
 def route_default():    
     for department in ["Marketing","Operations","Finance","Sales","HR"]:        

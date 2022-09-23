@@ -68,14 +68,7 @@ def configure_database(app):
 
     @app.teardown_request
     def shutdown_session(exception=None):
-        db.session.remove()
-
-    @app.context_processor
-    def inject_user():
-        current_user = {"username": "Guest"}
-        if g.current_user:
-            current_user=g.current_user
-        return dict(current_user=current_user)
+        db.session.remove()   
 
 
 def get_object_url(object_name):
