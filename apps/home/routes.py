@@ -151,15 +151,17 @@ def employees_update(id, employee=None):
         email = form["email"]
         profile_pic = request.files["profile_pic"]
 
-        check_employee = Users.query.filter_by(username=username).first()
-         # Check username exists                
+        check_employee = Users.query.filter(Users.username==username,Users.id!=id).first()
+        # Check username exists                
         if check_employee:
+            print(f'check employee found(username): {check_employee}', file=sys.stdout)
             session["flash_msg"] = {'msg':'Username has been taken','type':'warning'}
             return employees_update(id,employee=employee)
 
-        check_employee = Users.query.filter_by(email=email).first()
+        check_employee = Users.query.filter(Users.email==email,Users.id!=id).first()
         # Check email exists        
         if check_employee:
+            print(f'check employee found(email): {check_employee}', file=sys.stdout)
             session["flash_msg"] = {'msg':'The email is already taken','type':'warning'}
             return employees_update(id,employee=employee)
 
