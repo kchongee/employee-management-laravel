@@ -17,7 +17,7 @@ from jinja2 import TemplateNotFound
 from apps.authentication.models import Users, Employees, Departments, Jobs, token_required
 from apps import db, login_manager, s3_bucket, s3_bucket_location, s3_client, object_url
 from apps.home.util import output_flash_msg
-from apps.authentication.util import verify_pass
+from apps.authentication.util import verify_pass, hash_pass
 
 
 @blueprint.route('/index')
@@ -238,7 +238,7 @@ def employees_change_password(id):
             session["flash_msg"] = {'msg':"Password doesn't match",'type':'danger'}
             return redirect(url_for('home_blueprint.employees_change_password',id=id))
         
-        check_employee.password = new_password
+        check_employee.password = hash_pass(new_password)
         db.session.commit()   # check this line
         # db.session.filter_by(id=id).update()            
         
