@@ -4,7 +4,7 @@ Copyright (c) 2019 - present AppSeed.us
 """
 
 import sys
-from flask import Flask
+from flask import Flask, g
 from flask_login import LoginManager
 from flask_sqlalchemy import SQLAlchemy
 from importlib import import_module
@@ -60,7 +60,7 @@ def register_blueprints(app):
         app.register_blueprint(module.blueprint)
 
 
-def configure_database(app):
+def configure_database(app):    
 
     @app.before_first_request
     def initialize_database():
@@ -69,6 +69,11 @@ def configure_database(app):
     @app.teardown_request
     def shutdown_session(exception=None):
         db.session.remove()
+
+    @app.context_processor
+    def inject_user():
+        return dict(current_user=g.current_user)
+
 
 def get_object_url(object_name):
     return f"https://s3{s3_bucket_location}.amazonaws.com/{config('STORAGE_BUCKET')}/{object_name}"

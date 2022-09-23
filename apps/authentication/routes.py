@@ -5,7 +5,7 @@ Copyright (c) 2019 - present AppSeed.us
 
 import sys
 import jwt
-from flask import render_template, redirect, request, url_for, session
+from flask import render_template, redirect, request, url_for, session, g
 from flask_login import (
     current_user,
     login_user,
@@ -69,6 +69,7 @@ def login():
             # print(f'login double_auth_token: {session.get("double_auth_token")}', file=sys.stdout)
             elasticache_redis.set(auth_token,1,ACCESS_EXPIRES)
             # elasticache_redis.set(double_auth_token,auth_token,ACCESS_EXPIRES)
+            g.current_user = user
             return redirect(url_for('authentication_blueprint.route_default'))
 
         # Something (user or pass) is not ok
