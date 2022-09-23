@@ -18,35 +18,35 @@ login_manager = LoginManager()
 sess = Session()
 
 # aws_session = boto3.session.Session(aws_access_key_id=config("AWS_ACCESS_KEY"), aws_secret_access_key=config("AWS_SECRET_KEY"), aws_session_token=config("AWS_SESSION_TOKEN"))
-# # s3_bucket = aws_session.resource('s3').Bucket(config('STORAGE_BUCKET'))
-# s3_client = boto3.client('s3')
-# s3_bucket = boto3.resource('s3').Bucket(config('STORAGE_BUCKET'))
-# # s3_bucket_constraint = aws_session.client('s3').get_bucket_location(Bucket=config('STORAGE_BUCKET'))['LocationConstraint']
-# s3_bucket_constraint = s3_client.get_bucket_location(Bucket=config('STORAGE_BUCKET'))['LocationConstraint']
-# s3_bucket_location = '-'+s3_bucket_constraint if s3_bucket_constraint else '' 
-# object_url = "https://s3{0}.amazonaws.com/{1}".format(
-#     s3_bucket_location,
-#     config("STORAGE_BUCKET")
-# )
+# s3_bucket = aws_session.resource('s3').Bucket(config('STORAGE_BUCKET'))
+# s3_bucket_constraint = aws_session.client('s3').get_bucket_location(Bucket=config('STORAGE_BUCKET'))['LocationConstraint']
 # print(f'my aws_session: {aws_session}',file=sys.stdout)
-# print(f'my s3_bucket: {s3_bucket}',file=sys.stdout)
-# print(f'my s3_bucket_constraint: {s3_bucket_constraint}',file=sys.stdout)
-# print(f'my s3_bucket_location: {s3_bucket_location}',file=sys.stdout)
-
-# elasticache_redis = redis.Redis.from_url(f'redis://{config("SESSION_REDIS")}', decode_responses=True)
-# print(f'ping redis: {elasticache_redis.ping()}', file=sys.stdout)
-
-aws_session = ""
-s3_client = ""
-s3_bucket = ""
-s3_bucket_constraint = ""
+s3_client = boto3.client('s3')
+s3_bucket = boto3.resource('s3').Bucket(config('STORAGE_BUCKET'))
+s3_bucket_constraint = s3_client.get_bucket_location(Bucket=config('STORAGE_BUCKET'))['LocationConstraint']
 s3_bucket_location = '-'+s3_bucket_constraint if s3_bucket_constraint else '' 
 object_url = "https://s3{0}.amazonaws.com/{1}".format(
     s3_bucket_location,
     config("STORAGE_BUCKET")
 )
+print(f'my s3_bucket: {s3_bucket}',file=sys.stdout)
+print(f'my s3_bucket_constraint: {s3_bucket_constraint}',file=sys.stdout)
+print(f'my s3_bucket_location: {s3_bucket_location}',file=sys.stdout)
 
-elasticache_redis = ''
+elasticache_redis = redis.Redis.from_url(f'redis://{config("SESSION_REDIS")}', decode_responses=True)
+print(f'ping redis: {elasticache_redis.ping()}', file=sys.stdout)
+
+# RUN LOCALLY
+# aws_session = ""
+# s3_client = ""
+# s3_bucket = ""
+# s3_bucket_constraint = ""
+# s3_bucket_location = '-'+s3_bucket_constraint if s3_bucket_constraint else '' 
+# object_url = "https://s3{0}.amazonaws.com/{1}".format(
+#     s3_bucket_location,
+#     config("STORAGE_BUCKET")
+# )
+# elasticache_redis = ''
 
 def register_extensions(app):
     db.init_app(app)
