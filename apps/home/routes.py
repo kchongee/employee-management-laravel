@@ -245,7 +245,7 @@ def employees_change_password(id):
         return redirect(url_for('home_blueprint.employees_detail',id=id))
 
     output_flash_msg()
-    return render_template('home/employees_change_password.html', segment='employees_change_password', employee=check_employee)
+    return render_template('home/employees_change_password.html', segment='employees_change_password')
 
 # Helper - Extract current page name from request
 def get_segment(request):
