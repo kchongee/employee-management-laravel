@@ -24,7 +24,7 @@ def index():
 
 
 @blueprint.route('/<template>')
-@token_required
+# @token_required
 def route_template(template):
 
     try:
@@ -57,7 +57,7 @@ def employees():
 
 @blueprint.route('/employees/create',methods=('GET','POST'))
 @token_required
-def employees_create():    
+def employees_create():
     departments = Departments.query.all()
     jobs = Jobs.query.all()
     if request.method == 'POST':
@@ -130,59 +130,58 @@ def employees_detail(id):
 
 @blueprint.route('/employees/update/<id>',methods=['GET','POST'])
 @token_required
-def employees_update(id):
+def employees_update(id, user=None, employee=None):
     print(f'update?: {id}', file=sys.stdout)
-    user = Users.query.filter_by(id=id).first()
-    employee = Employees.query.filter_by(id=id).first()
-    employees = Employees.query.all()
-    if request.method == 'POST':
-        form = request.form.to_dict()
-        username = form["username"]
-        # password = form["password"]
-        email = form["email"]        
-        profile_pic = request.files["profile_pic"]                       
 
-         # Check username exists
-        user = Users.query.filter_by(username=username).first()
-        if user:
-            session["flash_msg"] = {'msg':'Username has been taken','type':'warning'}
-            return employees_update(id)
-
-        # Check email exists
-        user = Users.query.filter_by(email=email).first()
-        if user:
-            session["flash_msg"] = {'msg':'The email is already taken','type':'warning'}
-            return employees_update(id)
-
-        is_admin=True if form["is_admin"] else False
-        form.pop("is_admin",None)
-
-        db.session.query(Users).filter(id=id).update(form)
-        db.session.commit()
-        db.session.query(Employees).filter(id=id).update(form)
-        db.session.commit()                
-        
-        emp_img_name = config("EMP_IMG_PREF") + str(employee.id)
-        try:          
-            print(s3_bucket)  
-            s3_bucket.put_object(Key=emp_img_name, Body=profile_pic)
-        except:           
-            db.session.rollback()
-            print("something wrong when put object into s3")  
-            flash('There is something wrong when inserting the data', 'error')
-            return redirect(url_for('home_blueprint.employees'))
-        db.session.commit()        
-        
-        return redirect(url_for('home_blueprint.employees'))
-    else:
+    if not (user and employee):
         user = Users.query.filter_by(id=id).first()
         employee = Employees.query.filter_by(id=id).first()
 
+    # employees = Employees.query.all()
+    if request.method == 'POST':
+        form = request.form.to_dict()
+        username = form["username"]        
+        email = form["email"]        
+        profile_pic = request.files["profile_pic"]                       
+
+         # Check username exists                
+        if user.username == username:
+            session["flash_msg"] = {'msg':'Username has been taken','type':'warning'}
+            return employees_update(id,user=user,employee=employee)
+
+        # Check email exists        
+        if user.email == email:
+            session["flash_msg"] = {'msg':'The email is already taken','type':'warning'}
+            return employees_update(id,user=user,employee=employee)
+
+        is_admin=True if form["is_admin"] else False
+        form.pop("is_admin",None)        
+        db.session.query(Users).filter(id=id).update(form)
+        db.session.commit()
+        db.session.query(Employees).filter(id=id).update(form)
+        db.session.commit()
+        
+        emp_img_name = config("EMP_IMG_PREF") + str(employee.id)
+        if profile_pic:        
+            try:
+                print(s3_bucket)  
+                s3_bucket.put_object(Key=emp_img_name, Body=profile_pic)
+            except:           
+                db.session.rollback()
+                print("something wrong when put object into s3")  
+                session["flash_msg"] = {'msg':'There is something wrong when putting the object into s3','type':'warning'}
+                return employees_update(id,user=user,employee=employee)
+            db.session.commit()        
+        
+        session["flash_msg"] = {'msg':'Update successfull','type':'success'}
+        return redirect(url_for('home_blueprint.employees_detail',id=id))
+    else:        
         if not (user and employee):
             session["flash_msg"] = {'msg':f'There is something wrong when retrieving employee with id: {id}','type':'danger'}
-            return employees_update(id)
-        
-    return render_template('home/employees_update.html', segment='employees_update', employees=employees, employee=employee, user=user)
+            return redirect(url_for('home_blueprint.employees'))
+    
+    output_flash_msg()
+    return render_template('home/employees_update.html', segment='employees_update', employee=employee, user=user, object_url=object_url)
 
 @blueprint.route('/employees/delete/<id>')
 @token_required

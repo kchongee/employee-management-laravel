@@ -1,6 +1,6 @@
 {% extends 'layouts/base.html' %}
 
-{% block title %} Tables {% endblock title %}
+{% block title %} Employee Update {% endblock title %}
 
 {% block content %}
 
@@ -82,7 +82,7 @@
                       <label class="form-control-label" for="input-role">Role</label>
                       <select class="form-control" name="is_admin" id="input-role" placeholder="Role">
                         <option value=1>Admin</option>                        
-                        <option value=0 {% if !user.is_admin  %} selected {% endif %}>User</option>                        
+                        <option value=0 {% if not user.is_admin  %} selected {% endif %}>User</option>                        
                       </select>
                     </div>                    
                   </div>
@@ -109,9 +109,9 @@
                 <div class="row">
                   <div class="col-md-12">
                     <div class="form-group">
-                      <label for="input-profile_pic" class="form-control-label">Profile Picture</label>
+                      <label for="input-profile_pic" class="form-control-label">Profile Picture</label>                      
+                      <img src="{{object_url}}/profile-pic-emp-id-{{employee.id}}"/>
                       <input class="form-control" type="file" id="input-profile_pic" name="profile_pic" accept=".png, .jpg, .jpeg, .gif"/>
-                      <img src="" class="d-none"/>
                     </div>
                   </div>
                 </div>
@@ -136,7 +136,7 @@
                         <input class="form-control" name="department" list="departmentDatalistOptions" id="departmentDataList" placeholder="Department">
                         <datalist id="departmentDatalistOptions">
                           {% for department in departments%}
-                            <option value={{employee.department}} {% if department.__eq__(employee.department) %} selected {% endif %}>
+                            <option value={{employee.department}} {% if department==employee.department %} selected {% endif %}>
                           {% endfor %}
                         </datalist>
                       </div>
@@ -148,7 +148,7 @@
                       <input class="form-control" name="job" list="JobDatalistOptions" id="jobDataList" placeholder="Job Title">
                       <datalist id="JobDatalistOptions">
                         {% for job in jobs%}
-                          <option value="{{job}}" {% if job.__eq__(employee.job) %} selected {% endif %}>
+                          <option value="{{job}}" {% if job==employee.job %} selected {% endif %}>
                         {% endfor %}
                       </datalist>
                     </div>
