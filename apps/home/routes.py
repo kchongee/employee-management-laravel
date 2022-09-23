@@ -217,10 +217,11 @@ def employees_delete(id):
     session["flash_msg"] = {'msg':f'Successfully deleted the employee','type':'success'}
     return redirect(url_for('home_blueprint.employees'))  
 
-@blueprint.route('/employees/change_password/<id>',methods=('GET','POST'))  
+@blueprint.route('/employees/change_password/<id>',methods=['GET','POST'])  
 @login_required
 def employees_change_password(id):
-    if request.method == 'POST':
+    if request.method == 'POST':       
+        print(f'come in post? ', file=sys.stdout) 
         form = request.form.to_dict()
         old_password = form["old_password"]
         new_password = form["new_password"]
@@ -230,12 +231,12 @@ def employees_change_password(id):
         if not verify_pass(old_password, check_employee.password):
             print(f'verify password: {check_employee}', file=sys.stdout)
             session["flash_msg"] = {'msg':'You have entered the wrong password','type':'danger'}
-            return employees_change_password(id)
+            return redirect(url_for('home_blueprint.employees_change_password',id=id))
 
         if new_password != confirm_password:                
             print(f'check employee found(username): {check_employee}', file=sys.stdout)
             session["flash_msg"] = {'msg':"Password doesn't match",'type':'danger'}
-            return employees_change_password(id)
+            return redirect(url_for('home_blueprint.employees_change_password',id=id))
         
         check_employee.password = new_password
         db.session.commit()   # check this line
@@ -245,7 +246,7 @@ def employees_change_password(id):
         return redirect(url_for('home_blueprint.employees_detail',id=id))
 
     output_flash_msg()
-    return render_template('home/employees_change_password.html', segment='employees_change_password', id=id)
+    return render_template('home/employees_change_password.html', segment='employees_change_password', id=id)    
 
 # Helper - Extract current page name from request
 def get_segment(request):
