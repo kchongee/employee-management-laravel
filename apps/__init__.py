@@ -72,7 +72,10 @@ def configure_database(app):
 
     @app.context_processor
     def inject_user():
-        return dict(current_user=g.current_user)
+        current_user = {"username": "Guest"}
+        if g.current_user:
+            current_user=g.current_user
+        return dict(current_user=current_user)
 
 
 def get_object_url(object_name):
