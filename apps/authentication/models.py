@@ -18,7 +18,7 @@ class Users(db.Model, UserMixin):
     email = db.Column(db.String(64), unique=True)
     password = db.Column(db.LargeBinary)        
     full_name = db.Column(db.String(64))
-    contact = db.Column(db.Integer)
+    contact = db.Column(db.String(64))
     address = db.Column(db.String(64))
     department = db.Column(db.String(64))
     job = db.Column(db.String(64))    
