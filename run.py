@@ -28,4 +28,4 @@ if DEBUG:
     application.logger.info('DBMS        = ' + app_config.SQLALCHEMY_DATABASE_URI)
 
 if __name__ == "__main__":
-    application.run(host= '0.0.0.0',port=8000)
+    application.run()
