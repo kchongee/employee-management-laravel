@@ -11,7 +11,7 @@ from datetime import timedelta
 from apps import db, login_manager, elasticache_redis
 from apps.authentication import blueprint
 from apps.authentication.forms import LoginForm, CreateAccountForm
-from apps.authentication.models import Users, Employees, Departments, Jobs, token_required
+from apps.authentication.models import Users, Departments, Jobs, token_required
 from apps.authentication.util import verify_pass
 
 ACCESS_EXPIRES = timedelta(hours=1)

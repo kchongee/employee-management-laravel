@@ -9,7 +9,7 @@ from flask_login import (
     logout_user
 )
 from jinja2 import TemplateNotFound
-from apps.authentication.models import Users, Employees, Departments, Jobs, token_required
+from apps.authentication.models import Users, Departments, Jobs, token_required
 from apps import db, login_manager, s3_bucket, s3_bucket_location, s3_client, object_url
 from apps.home.util import output_flash_msg
 from apps.authentication.util import verify_pass, hash_pass
