@@ -86,14 +86,16 @@ def employees_create():
             session["flash_msg"] = {'msg':'The email is already taken','type':'warning'}
             return employees_create()
 
-        check_deparment = Departments.query.filter_by(title=department).first()
-        if not check_deparment:
+        check_department = Departments.query.filter_by(title=department).first()
+        if not check_department:
+            print(f"check_department: {check_department}", file=sys.stdout)
             new_department = Departments(title=department)
             db.session.add(new_department)
             db.session.flush()  
 
         check_job = Jobs.query.filter_by(title=department).first()
         if not check_job:
+            print(f"check_job: {check_job}", file=sys.stdout)
             new_job = Jobs(title=job)
             db.session.add(new_job)
             db.session.flush()  
@@ -177,8 +179,8 @@ def employees_update(id, employee=None):
             session["flash_msg"] = {'msg':'The email is already taken','type':'warning'}
             return employees_update(id,employee=employee)
 
-        check_deparment = Departments.query.filter_by(title=department).first()
-        if not check_deparment:
+        check_department = Departments.query.filter_by(title=department).first()
+        if not check_department:
             new_department = Departments(title=department)
             db.session.add(new_department)
             db.session.flush()  
