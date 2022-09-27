@@ -66,8 +66,8 @@ def configure_database(app):
         db.session.remove()
 
     @app.context_processor
-    def inject_CDN():        
-        return config("CLOUDFRONT_LINK", default="")
+    def inject_CDN():                
+        return app.config("CLOUDFRONT_LINK", default="")
 
 def create_app(config):
     app = Flask(__name__)
