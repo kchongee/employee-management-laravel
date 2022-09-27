@@ -67,7 +67,7 @@ def configure_database(app):
 
     @app.context_processor
     def inject_CDN():        
-        return dict(cdn_link=config("CLOUDFRONT_LINK", default=""))
+        return config("CLOUDFRONT_LINK", default="")
 
 def create_app(config):
     app = Flask(__name__)
