@@ -1,5 +1,4 @@
 import sys
-from turtle import title
 from decouple import config
 from apps.home import blueprint
 from flask import render_template, request, flash, url_for, session, redirect, url_for
