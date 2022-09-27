@@ -6,11 +6,13 @@ from importlib import import_module
 from decouple import config
 import boto3
 from flask_session import Session
+from flask_cors import CORS
 import redis
 
 db = SQLAlchemy()
 login_manager = LoginManager()
 sess = Session()
+cors = CORS()
 
 # aws_session = boto3.session.Session(aws_access_key_id=config("AWS_ACCESS_KEY"), aws_secret_access_key=config("AWS_SECRET_KEY"), aws_session_token=config("AWS_SESSION_TOKEN"))
 # s3_bucket = aws_session.resource('s3').Bucket(config('STORAGE_BUCKET'))
@@ -46,7 +48,8 @@ print(f'ping redis: {elasticache_redis.ping()}', file=sys.stdout)
 def register_extensions(app):
     db.init_app(app)
     login_manager.init_app(app)
-    sess.init_app(app)            
+    sess.init_app(app) 
+    cors.init_app(app)           
 
 
 def register_blueprints(app):
@@ -71,5 +74,5 @@ def create_app(config):
     app.config.from_object(config)
     register_extensions(app)
     register_blueprints(app)
-    configure_database(app)
+    configure_database(app)    
     return app
