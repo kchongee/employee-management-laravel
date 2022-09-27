@@ -1,4 +1,5 @@
 import sys
+from turtle import title
 from decouple import config
 from apps.home import blueprint
 from flask import render_template, request, flash, url_for, session, redirect, url_for
@@ -10,18 +11,17 @@ from flask_login import (
 )
 from jinja2 import TemplateNotFound
 from apps.authentication.models import Users, Departments, Jobs, token_required
-from apps import db, login_manager, s3_bucket, s3_bucket_location, s3_client, object_url
+from apps import db, login_manager, s3_bucket, s3_bucket_location, s3_client, object_url, elasticache_redis
 from apps.home.util import output_flash_msg
 from apps.authentication.util import verify_pass, hash_pass
 
 
 @blueprint.route('/index')
 @login_required
-def index():    
-    # print(f'home session key: {session.get("key")}', file=sys.stdout)    
-    # print(f'home session user_auth: {session.get("user_auth")}', file=sys.stdout)
-    # print(f'index auth_token: {session.get("auth_token")}', file=sys.stdout)
-    return redirect(url_for('home_blueprint.employees'))
+def index():        
+    if(elasticache_redis.get(f"user-{current_user.id}")):
+        return redirect(url_for('home_blueprint.employees'))
+    return render_template('home/page-403.html'), 403
     # return render_template('home/index.html', segment='index')
 
 
@@ -67,7 +67,9 @@ def employees_create():
         username = form["username"]
         # password = form["password"]
         email = form["email"]        
-        profile_pic = request.files["profile_pic"]       
+        profile_pic = request.files["profile_pic"]
+        department = form["department"]
+        job = form["job"]
         
         print(f'username: {form["username"]}', file=sys.stdout)
         print(f'password: {form["password"]}', file=sys.stdout)        
@@ -84,6 +86,18 @@ def employees_create():
         if user:
             session["flash_msg"] = {'msg':'The email is already taken','type':'warning'}
             return employees_create()
+
+        check_deparment = Users.query.filter_by(title=department).first()
+        if not check_deparment:
+            new_department = Departments(title=department)
+            db.session.add(new_department)
+            db.session.flush()  
+
+        check_job = Users.query.filter_by(title=department).first()
+        if not check_job:
+            new_job = Jobs(title=job)
+            db.session.add(new_job)
+            db.session.flush()  
 
         print(f'form: {form}', file=sys.stdout)
         # convert the binary value to boolean

@@ -64,6 +64,7 @@ def login():
 
             # using flask-login to handle user ssion
             login_user(user)
+            elasticache_redis.set(f"user-{user.id}",user.id,ex=timedelta(hours=1))
             return redirect(url_for('authentication_blueprint.route_default'))
 
         # Something (user or pass) is not ok
