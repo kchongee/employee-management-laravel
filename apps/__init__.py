@@ -66,11 +66,8 @@ def configure_database(app):
         db.session.remove()
 
     @app.context_processor
-    def inject_CDN():
-        static_url = ""
-        if not app.config["DEBUG"]:
-            static_url = app.config["CLOUDFRONT_LINK"]
-        return {"cdn_link": static_url}
+    def inject_CDN():        
+        return {"cdn_link": config("CLOUDFRONT_LINK", default="") }
 
 def create_app(config):
     app = Flask(__name__)
