@@ -49,7 +49,7 @@ def register_extensions(app):
     db.init_app(app)
     login_manager.init_app(app)
     sess.init_app(app) 
-    cors.init_app(app, resources={r"*": {"origins": "http://127.0.0.1:8000/"}})           
+    # cors.init_app(app, resources={r"*": {"origins": "http://127.0.0.1:8000/"}})           
 
 
 def register_blueprints(app):
