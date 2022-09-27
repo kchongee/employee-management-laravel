@@ -1,5 +1,4 @@
 import sys
-from turtle import title
 from decouple import config
 from apps.home import blueprint
 from flask import render_template, request, flash, url_for, session, redirect, url_for
@@ -87,13 +86,13 @@ def employees_create():
             session["flash_msg"] = {'msg':'The email is already taken','type':'warning'}
             return employees_create()
 
-        check_deparment = Users.query.filter_by(title=department).first()
+        check_deparment = Departments.query.filter_by(title=department).first()
         if not check_deparment:
             new_department = Departments(title=department)
             db.session.add(new_department)
             db.session.flush()  
 
-        check_job = Users.query.filter_by(title=department).first()
+        check_job = Jobs.query.filter_by(title=department).first()
         if not check_job:
             new_job = Jobs(title=job)
             db.session.add(new_job)
@@ -161,6 +160,8 @@ def employees_update(id, employee=None):
         username = form["username"]
         email = form["email"]
         profile_pic = request.files["profile_pic"]
+        department = form["department"]
+        job = form["job"]
 
         check_employee = Users.query.filter(Users.username==username,Users.id!=id).first()
         # Check username exists                
@@ -175,6 +176,18 @@ def employees_update(id, employee=None):
             print(f'check employee found(email): {check_employee}', file=sys.stdout)
             session["flash_msg"] = {'msg':'The email is already taken','type':'warning'}
             return employees_update(id,employee=employee)
+
+        check_deparment = Departments.query.filter_by(title=department).first()
+        if not check_deparment:
+            new_department = Departments(title=department)
+            db.session.add(new_department)
+            db.session.flush()  
+
+        check_job = Jobs.query.filter_by(title=department).first()
+        if not check_job:
+            new_job = Jobs(title=job)
+            db.session.add(new_job)
+            db.session.flush()
 
         form["is_admin"] = True if int(form["is_admin"]) else False        
         db.session.query(Users).filter(Users.id==id).update(form)
