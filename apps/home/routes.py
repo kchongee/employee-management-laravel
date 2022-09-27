@@ -1,4 +1,5 @@
 import sys
+from turtle import title
 from decouple import config
 from apps.home import blueprint
 from flask import render_template, request, flash, url_for, session, redirect, url_for
@@ -87,15 +88,15 @@ def employees_create():
             return employees_create()
 
         check_department = Departments.query.filter_by(title=department).first()
+        print(f"check_department: {check_department}", file=sys.stdout)
         if not check_department:
-            print(f"check_department: {check_department}", file=sys.stdout)
             new_department = Departments(title=department)
             db.session.add(new_department)
             db.session.flush()  
 
         check_job = Jobs.query.filter_by(title=department).first()
+        print(f"check_job: {check_job}", file=sys.stdout)
         if not check_job:
-            print(f"check_job: {check_job}", file=sys.stdout)
             new_job = Jobs(title=job)
             db.session.add(new_job)
             db.session.flush()  
