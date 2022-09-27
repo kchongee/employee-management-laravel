@@ -64,10 +64,6 @@ def configure_database(app):
     @app.teardown_request
     def shutdown_session(exception=None):
         db.session.remove()
-
-    @app.context_processor
-    def inject_cdn():        
-        return dict(cdn=config("CLOUDFRONT_LINK", default=""))
     
 
 def create_app(config):
