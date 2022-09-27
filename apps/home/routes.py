@@ -87,13 +87,15 @@ def employees_create():
             return employees_create()
 
         check_department = Departments.query.filter_by(title=department).first()
+        print(f"form_department: {department}", file=sys.stdout)
         print(f"check_department: {check_department}", file=sys.stdout)
         if not check_department:
             new_department = Departments(title=department)
             db.session.add(new_department)
             db.session.flush()  
 
-        check_job = Jobs.query.filter_by(title=department).first()
+        check_job = Jobs.query.filter_by(title=job).first()
+        print(f"form_job: {job}", file=sys.stdout)
         print(f"check_job: {check_job}", file=sys.stdout)
         if not check_job:
             new_job = Jobs(title=job)
