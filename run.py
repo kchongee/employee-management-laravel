@@ -29,7 +29,3 @@ if DEBUG:
 
 if __name__ == "__main__":
     application.run()
-
-@application.context_processor
-def inject_cdn():        
-    return dict(cdn=config("CLOUDFRONT_LINK", default=""))
