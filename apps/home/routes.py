@@ -78,13 +78,13 @@ def employees_create():
         user = Users.query.filter_by(username=username).first()
         if user:
             session["flash_msg"] = {'msg':'Username has been taken','type':'warning'}
-            return employees_create()         
+            return redirect(url_for('home_blueprint.employees_create'))
 
         # Check email exists
         user = Users.query.filter_by(email=email).first()
         if user:
             session["flash_msg"] = {'msg':'The email is already taken','type':'warning'}
-            return employees_create()
+            return redirect(url_for('home_blueprint.employees_create'))
 
         check_department = Departments.query.filter_by(title=department).first()        
         if not check_department and department:
